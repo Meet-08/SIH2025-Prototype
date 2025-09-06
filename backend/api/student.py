@@ -11,7 +11,6 @@ router = APIRouter()
 
 @router.post("/register", response_model=StudentOut, status_code=201)
 def create_student(student: StudentCreate, db: Session = Depends(get_db)):
-    print("Creating student:", student)
     db_student = crud_student.get_student_by_email(db, email=student.email)
 
     if db_student:
@@ -22,7 +21,6 @@ def create_student(student: StudentCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=StudentOut)
 def login_student(student: StudentLogin, db: Session = Depends(get_db)):
-    print("Logging in student:", student)
     db_student = crud_student.get_student_by_email(db, email=student.email)
     if not db_student:
         raise HTTPException(status_code=404, detail="Student not found")
