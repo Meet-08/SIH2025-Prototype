@@ -24,6 +24,7 @@ class _AptitudeScreenState extends State<AptitudeScreen> {
       backgroundColor: const Color.fromARGB(148, 248, 249, 250),
       body: SafeArea(
         child: Container(
+          height: 450,
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
