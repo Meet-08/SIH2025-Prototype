@@ -81,7 +81,6 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                           children: [
                             const SizedBox(height: 32.0),
 
-                            // Logo/Icon
                             const CircleAvatar(
                               radius: 32,
                               backgroundColor: AppColors.primaryContainer,

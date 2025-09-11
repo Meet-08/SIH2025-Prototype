@@ -13,4 +13,9 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
   void addUser(UserModel user) {
     state = user;
   }
+
+  void logout() {
+    // TODO: Clear any stored tokens or session data if necessary
+    state = null;
+  }
 }

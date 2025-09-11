@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lakshya/core/constants/mock_data.dart';
 import 'package:lakshya/core/core.dart';
+import 'package:lakshya/core/utils/generate_recommendation.dart';
 import 'package:lakshya/features/student/models/question_model.dart';
+import 'package:lakshya/features/student/view/screens/result_screen.dart';
 
 class AptitudeScreen extends StatefulWidget {
   const AptitudeScreen({super.key});
@@ -24,7 +26,7 @@ class _AptitudeScreenState extends State<AptitudeScreen> {
       backgroundColor: const Color.fromARGB(148, 248, 249, 250),
       body: SafeArea(
         child: Container(
-          height: 450,
+          height: 550,
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -137,28 +139,13 @@ class _AptitudeScreenState extends State<AptitudeScreen> {
         currentQuestionIndex++;
       });
     } else {
-      _showResult();
+      final recommendedResult = calculateRecommendation(answers);
+      context.push(
+        MaterialPageRoute(
+          builder: (context) =>
+              ResultScreen(recommendationResult: recommendedResult),
+        ),
+      );
     }
-  }
-
-  void _showResult() {
-    print("User Answers: $answers");
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Quiz Completed"),
-        content: const Text("Your responses have been recorded."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
   }
 }

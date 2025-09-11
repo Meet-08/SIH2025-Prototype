@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakshya/core/constants/routes.dart';
-import 'package:lakshya/features/features.dart';
+import 'package:lakshya/features/auth/view/screen/student_login_screen.dart';
 
 import 'core/core.dart';
 
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       title: 'Lakshya - Career Guidance App',
       routes: routes,
       theme: AppTheme.lightTheme,
-      home: const OnboardingScreen(),
+      home: const StudentLoginScreen(),
     );
   }
 }
