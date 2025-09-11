@@ -30,9 +30,6 @@ class RatingQuestionWidget extends StatelessWidget {
         _buildRatingLabels(context),
 
         const SizedBox(height: 32),
-
-        // Selected Rating Display
-        if (selectedRating > 0) _buildSelectedRatingDisplay(context),
       ],
     );
   }
@@ -67,7 +64,8 @@ class RatingQuestionWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(5, (index) {
         final rating = index + 1;
-        final isSelected = selectedRating == rating;
+        final isSelected =
+            rating <= selectedRating; // Fill stars up to selected rating
 
         return GestureDetector(
           onTap: () => onRatingSelected(rating),
@@ -85,7 +83,7 @@ class RatingQuestionWidget extends StatelessWidget {
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: AppColors.accent.withOpacity(0.3),
+                        color: AppColors.accent.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -96,7 +94,7 @@ class RatingQuestionWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  LucideIcons.star,
+                  isSelected ? LucideIcons.star : LucideIcons.star,
                   color: isSelected
                       ? AppColors.onAccent
                       : AppColors.textSecondary,
@@ -142,31 +140,6 @@ class RatingQuestionWidget extends StatelessWidget {
             "Agree",
             style: context.textTheme.bodySmall?.copyWith(
               color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelectedRatingDisplay(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.secondaryContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(LucideIcons.check, color: AppColors.secondary, size: 20),
-          const SizedBox(width: 8),
-          Text(
-            "You selected: $selectedRating",
-            style: context.textTheme.titleSmall?.copyWith(
-              color: AppColors.secondary,
-              fontWeight: FontWeight.bold,
             ),
           ),
         ],

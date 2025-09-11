@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from api import career, course, course_career, student
+from api import career, course, course_career, recommedation, student
 from db.database import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -13,3 +13,4 @@ app.include_router(career.router, prefix="/v1/api/career", tags=["careers"])
 app.include_router(
     course_career.router, prefix="/v1/api/course_career", tags=["course_career"]
 )
+app.include_router(recommedation.router, prefix="/v1/api", tags=["recommendation"])

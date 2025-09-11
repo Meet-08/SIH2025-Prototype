@@ -1,11 +1,23 @@
-class RecommendationResult {
+class RecommendationResultModel {
   final String recommendedStream;
-  final Map<String, int> streamScores;
-  final Map<String, int> domainScores;
+  final String aiReasoning;
 
-  RecommendationResult({
+  RecommendationResultModel({
     required this.recommendedStream,
-    required this.streamScores,
-    required this.domainScores,
+    required this.aiReasoning,
   });
+
+  factory RecommendationResultModel.fromJson(Map<String, dynamic> json) {
+    return RecommendationResultModel(
+      recommendedStream: json['recommended_stream'] as String,
+      aiReasoning: json['ai_reasoning'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'recommended_stream': recommendedStream,
+      'ai_reasoning': aiReasoning,
+    };
+  }
 }

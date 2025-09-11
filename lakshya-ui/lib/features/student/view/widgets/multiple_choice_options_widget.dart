@@ -21,53 +21,88 @@ class MultipleChoiceOptionsWidget extends StatelessWidget {
         final String option = entry.value;
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 8),
           width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () => onOptionSelected(index),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _getOptionColor(index),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.all(16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 2,
-            ),
-            child: Row(
-              children: [
-                Icon(_getOptionIcon(index), size: 20),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    option,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => onOptionSelected(index),
+              borderRadius: BorderRadius.circular(12),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-              ],
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: _getOptionColor(index).withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _getOptionColor(index).withValues(alpha: 0.08),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Option indicator - more compact
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: _getOptionColor(index).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: _getOptionColor(index),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          String.fromCharCode(65 + index), // A, B, C, D
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: _getOptionColor(index),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Option text - more compact
+                    Expanded(
+                      child: Text(
+                        option,
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textPrimary,
+                          height: 1.3,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    // Arrow icon - smaller
+                    Icon(
+                      LucideIcons.chevron_right,
+                      color: _getOptionColor(index),
+                      size: 16,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         );
       }).toList(),
     );
-  }
-
-  IconData _getOptionIcon(int index) {
-    switch (index) {
-      case 0:
-        return LucideIcons.circle;
-      case 1:
-        return LucideIcons.square;
-      case 2:
-        return LucideIcons.triangle;
-      case 3:
-        return LucideIcons.diamond;
-      default:
-        return LucideIcons.circle;
-    }
   }
 
   Color _getOptionColor(int index) {

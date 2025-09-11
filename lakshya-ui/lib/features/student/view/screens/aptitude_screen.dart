@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakshya/core/constants/mock_data.dart';
 import 'package:lakshya/core/core.dart';
-import 'package:lakshya/core/utils/generate_recommendation.dart';
+import 'package:lakshya/core/utils/show_snackbar.dart';
 import 'package:lakshya/features/student/models/question_model.dart';
-import 'package:lakshya/features/student/view/screens/result_screen.dart';
+import 'package:lakshya/features/student/models/recommended_result_model.dart';
 import 'package:lakshya/features/student/view/widgets/widgets.dart';
+import 'package:lakshya/features/student/viewmodel/quiz_view_model.dart';
 
-class AptitudeScreen extends StatefulWidget {
+class AptitudeScreen extends ConsumerStatefulWidget {
   const AptitudeScreen({super.key});
 
   @override
-  State<AptitudeScreen> createState() => _AptitudeScreenState();
+  ConsumerState<AptitudeScreen> createState() => _AptitudeScreenState();
 }
 
-class _AptitudeScreenState extends State<AptitudeScreen> {
+class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
   int currentQuestionIndex = 0;
-  Map<int, dynamic> answers = {};
+  Map<int, int> answers = {};
+
+  void _moveNextOrFinish() async {
+    if (currentQuestionIndex + 1 < aptitudeQuestions.length) {
+      setState(() {
+        currentQuestionIndex++;
+      });
+    } else {
+      await ref
+          .read(quizViewModelProvider.notifier)
+          .fetchRecommendations(answers);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +38,21 @@ class _AptitudeScreenState extends State<AptitudeScreen> {
     int totalQuestions = aptitudeQuestions.length;
     int answeredCount = answers.length;
     double progressValue = answeredCount / totalQuestions;
+
+    ref.listen<AsyncValue<RecommendationResultModel>?>(quizViewModelProvider, (
+      previous,
+      next,
+    ) {
+      next?.when(
+        data: (recommendationResult) {
+          context.pushNamedAndRemoveUntil('/aptitude-result', (_) => false);
+        },
+        loading: () {},
+        error: (err, stack) {
+          showSnackbar(context, 'Error: $err');
+        },
+      );
+    });
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -232,21 +261,5 @@ class _AptitudeScreenState extends State<AptitudeScreen> {
         ),
       ),
     );
-  }
-
-  void _moveNextOrFinish() {
-    if (currentQuestionIndex + 1 < aptitudeQuestions.length) {
-      setState(() {
-        currentQuestionIndex++;
-      });
-    } else {
-      final recommendedResult = calculateRecommendation(answers);
-      context.push(
-        MaterialPageRoute(
-          builder: (context) =>
-              ResultScreen(recommendationResult: recommendedResult),
-        ),
-      );
-    }
   }
 }

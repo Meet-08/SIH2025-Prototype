@@ -3,106 +3,153 @@ import 'package:lakshya/features/student/models/question_model.dart';
 final List<QuestionModel> aptitudeQuestions = [
   QuestionModel(
     id: 'q1',
-    question:
-        'Do you enjoy problem-solving and logical thinking, especially in subjects like physics, chemistry, and mathematics?',
+    question: 'How do you prefer to solve problems?',
     type: QuestionType.multipleChoice,
-    options: ['Yes', 'No'],
+    options: [
+      'Using logical thinking, mathematics, and scientific methods',
+      'Analyzing data, market trends, and financial information',
+      'Using creativity, imagination, and artistic expression',
+      'Working directly with people to address their needs',
+      'Using practical skills and hands-on approaches',
+    ],
   ),
   QuestionModel(
     id: 'q2',
-    question:
-        'Do you fascinated by business, finance, and economics, and do you have strong mathematical or analytical skills?',
+    question: 'What motivates you most in your career goals?',
     type: QuestionType.multipleChoice,
-    options: ['Yes', 'No'],
+    options: [
+      'Discovering new knowledge and solving complex problems',
+      'Achieving financial success and business growth',
+      'Personal expression and making social impact',
+      'Serving others and contributing to community welfare',
+      'Quick employment and practical skill application',
+    ],
   ),
   QuestionModel(
     id: 'q3',
-    question:
-        'Are you creative, imaginative, and interested in subjects like literature, history, or political science?',
+    question: 'Which subjects fascinate you most?',
     type: QuestionType.multipleChoice,
-    options: ['Yes', 'No'],
+    options: [
+      'Physics, Chemistry, Mathematics, Biology',
+      'Business Studies, Economics, Accounting, Statistics',
+      'Literature, History, Political Science, Philosophy',
+      'Psychology, Sociology, Social Work, Public Administration',
+      'Technical skills, hands-on learning, practical applications',
+    ],
   ),
   QuestionModel(
     id: 'q4',
-    question:
-        'Do you prefer hands-on learning and practical skills over theoretical knowledge?',
+    question: 'What balance do you prefer between stability and innovation?',
     type: QuestionType.multipleChoice,
-    options: ['Yes', 'No'],
+    options: [
+      'High innovation with research and technological advancement',
+      'Balanced approach with financial stability and business growth',
+      'Creative freedom with potential for artistic recognition',
+      'Stable service roles with community impact',
+      'Stable technical roles with hands-on expertise',
+    ],
   ),
   QuestionModel(
     id: 'q5',
-    question: 'What kind of work environment do you prefer?',
+    question: 'How do you learn best?',
     type: QuestionType.multipleChoice,
-    options: ['Laboratory', 'Office', 'Creative Studio', 'Workshop'],
+    options: [
+      'Through experimentation, hypothesis testing, and research',
+      'Through case studies, market analysis, and practical applications',
+      'Through creative exploration, artistic practice, and self-expression',
+      'Through direct experience helping others and community involvement',
+      'Through hands-on practice and apprenticeship-style learning',
+    ],
   ),
   QuestionModel(
     id: 'q6',
-    question: 'What do you prefer in your job?',
+    question: 'What kind of impact do you want to make in your career?',
     type: QuestionType.multipleChoice,
     options: [
-      'High-paying and stable career',
-      'Personal expression and social impact',
-      'Start earning quickly after education',
+      'Advance scientific knowledge or technological innovation',
+      'Build successful businesses or manage financial growth',
+      'Create meaningful art or cultural contributions',
+      'Improve lives through service and community support',
+      'Maintain and improve technical infrastructure',
     ],
   ),
   QuestionModel(
     id: 'q7',
-    question: 'What do you prefer working with?',
+    question: 'What are your strongest natural abilities?',
     type: QuestionType.multipleChoice,
-    options: ['People', 'Data', 'Machines'],
+    options: [
+      'Analytical thinking, mathematical reasoning, scientific curiosity',
+      'Strategic thinking, negotiation, financial analysis',
+      'Creative expression, artistic vision, communication',
+      'Empathy, communication, problem-solving for people',
+      'Mechanical skills, practical problem-solving, technical expertise',
+    ],
   ),
   QuestionModel(
     id: 'q8',
-    question:
-        'What are your natural skills and abilities? Are you better at working with?',
+    question: 'How do you define career success?',
     type: QuestionType.multipleChoice,
     options: [
-      'Your hands',
-      'Solving abstract problems',
-      'Communicating with people',
+      'Scientific breakthroughs, published research, innovation',
+      'Financial growth, business expansion, market leadership',
+      'Artistic recognition, creative fulfillment, cultural impact',
+      'Lives improved, communities served, social change',
+      'Technical mastery, system reliability, practical problem-solving',
     ],
   ),
   QuestionModel(
     id: 'q9',
-    question: 'What kind of learner are you? Do you learn best by?',
+    question: 'What do you prefer working with?',
     type: QuestionType.multipleChoice,
     options: [
-      'Reading and studying theory',
-      'Doing and experiencing things firsthand',
+      'People — collaboration, expression, interpersonal interaction',
+      'Data — analysis, trends, decision-making',
+      'Machines — experimentation, problem-solving, technical systems',
     ],
   ),
   QuestionModel(
     id: 'q10',
-    question:
-        'I enjoy building or repairing things (e.g., making models, fixing gadgets).',
-    type: QuestionType.rating,
-    options: ['1', '2', '3', '4', '5'],
+    question: 'Which activity sounds most fun to you?',
+    type: QuestionType.multipleChoice,
+    options: [
+      'Designing and building a model (e.g., a bridge, robot, or structure)',
+      'Marketing plan for a school event',
+      'Writing or illustrating a story/comic',
+      'Organizing a charity drive or school club',
+    ],
   ),
   QuestionModel(
     id: 'q11',
     question:
-        'I like solving puzzles, logical problems, or coding challenges just for fun.',
+        'On a scale of 1 to 5: I enjoy planning or organizing events (like a class project or club activity).',
     type: QuestionType.rating,
     options: ['1', '2', '3', '4', '5'],
   ),
   QuestionModel(
     id: 'q12',
     question:
-        'I am excited by starting or running a small business or selling my ideas.',
+        'On a scale of 1 to 5: I enjoy looking at or creating art (painting, drawing, crafting).',
     type: QuestionType.rating,
     options: ['1', '2', '3', '4', '5'],
   ),
   QuestionModel(
     id: 'q13',
     question:
-        'I prefer expressing myself through art, design, writing, or performance.',
+        'On a scale of 1 to 5: I enjoy helping or teaching other people (explaining, tutoring, volunteering).',
     type: QuestionType.rating,
     options: ['1', '2', '3', '4', '5'],
   ),
   QuestionModel(
     id: 'q14',
     question:
-        'I want to start earning quickly after finishing school (prefer early employment).',
+        'On a scale of 1 to 5: I enjoy experimenting with new technology or gadgets (like coding a simple program, building a model robot).',
+    type: QuestionType.rating,
+    options: ['1', '2', '3', '4', '5'],
+  ),
+  QuestionModel(
+    id: 'q15',
+    question:
+        'On a scale of 1 to 5: I enjoy analyzing problems and finding logical solutions (solving puzzles, troubleshooting, researching).',
     type: QuestionType.rating,
     options: ['1', '2', '3', '4', '5'],
   ),
