@@ -154,3 +154,17 @@ final List<QuestionModel> aptitudeQuestions = [
     options: ['1', '2', '3', '4', '5'],
   ),
 ];
+
+const List<String> careerFields = [
+  'Mathematics & Computer Science',
+  'Biological Sciences & Biotechnology',
+  'Commerce & Finance',
+  'Arts, Design & Creative Media',
+  'Health & Medicine',
+  'Engineering - Civil & Mechanical',
+  'Law & Legal Studies',
+  'Hospitality, Travel & Tourism',
+  'Agriculture & Allied Sciences',
+  'Media, Content & Performing Arts',
+  'Environmental Science & Sustainability',
+];

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakshya/core/failure/app_failure.dart';
 import 'package:lakshya/core/network/dio_client.dart';
+import 'package:lakshya/features/student/models/career_map_model.dart';
 import 'package:lakshya/features/student/models/recommended_result_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -36,6 +37,25 @@ class ApiService {
       final data = response.data;
       final recommendationResult = RecommendationResultModel.fromJson(data);
       return Right(recommendationResult);
+    } catch (e) {
+      return Left(AppFailure('Network error: $e'));
+    }
+  }
+
+  Future<Either<AppFailure, CareerMapModel>> getCareerMap(
+    String careerField,
+  ) async {
+    final encodedCareerField = Uri.encodeComponent(careerField);
+    try {
+      final response = await dioClient.dio.get(
+        '/course_career/roadmaps/$encodedCareerField',
+      );
+      if (response.statusCode != 200) {
+        return Left(AppFailure('Failed to fetch career map'));
+      }
+      final data = response.data;
+      final careerMap = CareerMapModel.fromMap(data);
+      return Right(careerMap);
     } catch (e) {
       return Left(AppFailure('Network error: $e'));
     }

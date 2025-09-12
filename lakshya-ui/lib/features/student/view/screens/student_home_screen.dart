@@ -278,9 +278,8 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                             description:
                                 "Find the best career options tailored to your profile.",
                             icon: LucideIcons.compass,
-                            onTap: () {
-                              //TODO: Navigate to Explore your Career Path Screen
-                            },
+                            onTap: () =>
+                                context.pushNamed("/course-to-career-mapping"),
                           ),
                           FeatureCard(
                             title: "Colleges",

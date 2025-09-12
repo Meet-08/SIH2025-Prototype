@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from db.deps import get_db
+from mock_data import roadmaps
 from models.career import Career
 from models.course import Course
 
@@ -21,27 +22,15 @@ def map_course_to_career(
         return career
 
 
-@router.get("/roadmap/{stream}")
-def get_stream_roadmap(stream: str, db: Session = Depends(get_db)):
-    courses = db.query(Course).filter(Course.stream == stream).all()
-    return {
-        "stream": stream,
-        "courses": [
-            {
-                "course_id": course.course_id,
-                "course_name": course.course_name,
-                "description": course.description,
-                "careers": [
-                    {
-                        "career_id": career.career_id,
-                        "career_name": career.career_name,
-                        "sector": career.sector,
-                        "higher_study_options": career.higher_study_options,
-                        "exam_options": career.exam_options,
-                    }
-                    for career in course.careers
-                ],
-            }
-            for course in courses
-        ],
-    }
+@router.get("/roadmaps/{career_field}", response_model=dict)
+def get_roadmap_by_field(career_field: str):
+    normalized_field = career_field.strip().lower()
+    print(normalized_field)
+    for r in roadmaps:
+        roadmap_field = r.get("careerField", "").strip().lower()
+        if roadmap_field == normalized_field:
+            return r
+
+    raise HTTPException(
+        status_code=404, detail=f"No roadmap found for '{career_field}'"
+    )
