@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:graphview/GraphView.dart';
-
-import '../../models/career_map_model.dart';
+import 'package:lakshya/features/student/models/career_map_model.dart';
 
 class CareerRoadmapGraph extends StatefulWidget {
   final CareerMapModel careerMapModel;
@@ -19,7 +20,8 @@ class CareerRoadmapGraph extends StatefulWidget {
   State<CareerRoadmapGraph> createState() => _CareerRoadmapGraphState();
 }
 
-class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
+class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
+    with TickerProviderStateMixin {
   final Graph graph = Graph()..isTree = true;
   late BuchheimWalkerConfiguration builder;
 
@@ -33,21 +35,39 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
       TransformationController();
 
   late Map<int, dynamic> nodeHierarchy;
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
-    print(widget.careerMapModel.courses);
     super.initState();
+    _initializeAnimations();
     _initializeBuilder();
     _initializeHierarchy();
     _initializeRootNode();
   }
 
+  void _initializeAnimations() {
+    _pulseController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
   void _initializeBuilder() {
     builder = BuchheimWalkerConfiguration()
-      ..siblingSeparation = 80
-      ..levelSeparation = 120
-      ..subtreeSeparation = 100
+      ..siblingSeparation = 100
+      ..levelSeparation = 140
+      ..subtreeSeparation = 120
       ..orientation = BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM;
   }
 
@@ -134,7 +154,6 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
     final courses = widget.careerMapModel.courses;
     int courseIndex = 0;
     courses.forEach((courseKey, courseData) {
-      print(courseData.name);
       final baseCourseId = 1000 + courseIndex * 100;
       final courseNodeId = baseCourseId;
       final specializationCategoryId = baseCourseId + 10;
@@ -300,81 +319,53 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
 
     final type = (data['type'] ?? 'unknown') as String;
     final title = (data['title'] ?? '') as String;
+    final subtitle = (data['subtitle'] ?? '') as String;
 
-    Color backgroundColor;
-    Color textColor = Colors.white;
-    IconData? icon;
+    final isExpanded = expandedNodes.contains(nodeId);
+    final hasChildren = (nodeChildren[nodeId]?.isNotEmpty ?? false);
 
-    switch (type) {
-      case 'start':
-        backgroundColor = Colors.teal.shade600;
-        icon = Icons.flag;
-        break;
-      case 'after10th':
-        backgroundColor = Colors.teal.shade700;
-        icon = Icons.school;
-        break;
-      case 'after12th':
-        backgroundColor = Colors.indigo.shade600;
-        icon = Icons.assignment;
-        break;
-      case 'course_option_detail':
-        backgroundColor = Colors.deepPurple.shade600;
-        icon = Icons.menu_book;
-        break;
-      case 'category':
-        backgroundColor = Colors.grey.shade700;
-        icon = Icons.category;
-        break;
-      case 'subject':
-        backgroundColor = Colors.blueGrey.shade600;
-        icon = Icons.menu_book_outlined;
-        break;
-      case 'entranceExam':
-        backgroundColor = Colors.orange.shade600;
-        icon = Icons.gavel;
-        break;
-      case 'specialization':
-        backgroundColor = Colors.teal.shade400;
-        icon = Icons.star;
-        break;
-      case 'keySubject':
-        backgroundColor = Colors.blueAccent.shade400;
-        icon = Icons.list_alt;
-        break;
-      case 'industry':
-        backgroundColor = Colors.blue.shade500;
-        icon = Icons.business;
-        break;
-      case 'job':
-        backgroundColor = Colors.green.shade500;
-        icon = Icons.work;
-        break;
-      case 'exam':
-        backgroundColor = Colors.orange.shade500;
-        icon = Icons.quiz;
-        break;
-      case 'degree':
-        backgroundColor = Colors.purple.shade500;
-        icon = Icons.school_outlined;
-        break;
-      case 'entrepreneur':
-        backgroundColor = Colors.red.shade500;
-        icon = Icons.lightbulb;
-        break;
-      default:
-        backgroundColor = Colors.grey.shade400;
-        icon = Icons.help_outline;
-    }
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: (type == 'start' && hasChildren && !isExpanded)
+              ? _pulseAnimation.value
+              : 1.0,
+          child: _buildNodeCard(
+            nodeId,
+            type,
+            title,
+            subtitle,
+            isExpanded,
+            hasChildren,
+          ),
+        );
+      },
+    );
+  }
 
-    return Material(
-      elevation: expandedNodes.contains(nodeId) ? 6 : 4,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () => _expandNode(nodeId),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+  Widget _buildNodeCard(
+    int nodeId,
+    String type,
+    String title,
+    String subtitle,
+    bool isExpanded,
+    bool hasChildren,
+  ) {
+    final nodeStyle = _getNodeStyle(type);
+
+    return GFCard(
+      margin: const EdgeInsets.all(4),
+      elevation: isExpanded ? 8 : 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      content: InkWell(
+        onTap: hasChildren ? () => _expandNode(nodeId) : null,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: nodeStyle.backgroundColor,
+            borderRadius: BorderRadius.circular(16),
+          ),
           constraints: BoxConstraints(
             minWidth: _getNodeWidth(type),
             maxWidth: _getNodeMaxWidth(type),
@@ -386,56 +377,85 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
                 ? 20
                 : (type == 'course_option_detail' ? 16 : 12),
           ),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(12),
-            border: expandedNodes.contains(nodeId)
-                ? Border.all(color: Colors.white, width: 2)
-                : null,
-          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Icon and expansion indicator row
               Row(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    icon,
-                    color: textColor,
-                    size: type == 'course_option_detail' ? 24 : 20,
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      nodeStyle.icon,
+                      color: nodeStyle.textColor,
+                      size: type == 'course_option_detail' ? 24 : 20,
+                    ),
                   ),
-                  if ((nodeChildren[nodeId]?.isNotEmpty ?? false) &&
-                      !expandedNodes.contains(nodeId))
-                    Padding(
-                      padding: const EdgeInsets.only(left: 6),
+                  if (hasChildren) ...[
+                    const SizedBox(width: 8),
+                    GFBadge(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      shape: GFBadgeShape.circle,
                       child: Icon(
-                        Icons.add_circle_outline,
-                        color: textColor,
-                        size: 16,
+                        isExpanded
+                            ? LucideIcons.chevron_up
+                            : LucideIcons.chevron_down,
+                        color: nodeStyle.backgroundColor,
+                        size: 14,
                       ),
                     ),
-                  if (expandedNodes.contains(nodeId))
-                    Padding(
-                      padding: const EdgeInsets.only(left: 6),
-                      child: Icon(
-                        Icons.remove_circle_outline,
-                        color: textColor,
-                        size: 16,
-                      ),
-                    ),
+                  ],
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
+
+              // Title
               Text(
                 title,
                 style: TextStyle(
-                  color: textColor,
+                  color: nodeStyle.textColor,
                   fontSize: _getFontSize(type),
                   fontWeight: _getFontWeight(type),
+                  letterSpacing: 0.5,
                 ),
                 textAlign: TextAlign.center,
-                softWrap: true,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
+
+              // Subtitle (if exists)
+              if (subtitle.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: nodeStyle.textColor.withValues(alpha: 0.8),
+                    fontSize: _getFontSize(type) - 2,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+
+              // Progress indicator for expanded nodes
+              if (isExpanded) ...[
+                const SizedBox(height: 8),
+                GFProgressBar(
+                  percentage: 1,
+                  backgroundColor: Colors.white.withValues(alpha: 0.3),
+                  progressBarColor: Colors.white,
+                  lineHeight: 3,
+                  radius: 1.5,
+                ),
+              ],
             ],
           ),
         ),
@@ -443,28 +463,127 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
     );
   }
 
+  NodeStyle _getNodeStyle(String type) {
+    switch (type) {
+      case 'start':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF00838F), // Cyan 700
+          textColor: Colors.white,
+          icon: LucideIcons.flag,
+        );
+      case 'after10th':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF00695C), // Teal 700
+          textColor: Colors.white,
+          icon: LucideIcons.graduation_cap,
+        );
+      case 'after12th':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF3F51B5), // Indigo
+          textColor: Colors.white,
+          icon: LucideIcons.book_open,
+        );
+      case 'course_option_detail':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF7B1FA2), // Purple 700
+          textColor: Colors.white,
+          icon: LucideIcons.book,
+        );
+      case 'category':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF455A64), // Blue Grey 700
+          textColor: Colors.white,
+          icon: LucideIcons.folder_open,
+        );
+      case 'subject':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF546E7A), // Blue Grey 600
+          textColor: Colors.white,
+          icon: LucideIcons.file_text,
+        );
+      case 'entranceExam':
+        return NodeStyle(
+          backgroundColor: const Color(0xFFE65100), // Deep Orange 900
+          textColor: Colors.white,
+          icon: LucideIcons.clipboard_list,
+        );
+      case 'specialization':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF00897B), // Teal 600
+          textColor: Colors.white,
+          icon: LucideIcons.star,
+        );
+      case 'keySubject':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF1976D2), // Blue 700
+          textColor: Colors.white,
+          icon: LucideIcons.bookmark,
+        );
+      case 'industry':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF1565C0), // Blue 800
+          textColor: Colors.white,
+          icon: LucideIcons.building,
+        );
+      case 'job':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF2E7D32), // Green 800
+          textColor: Colors.white,
+          icon: LucideIcons.briefcase,
+        );
+      case 'exam':
+        return NodeStyle(
+          backgroundColor: const Color(0xFFEF6C00), // Orange 800
+          textColor: Colors.white,
+          icon: LucideIcons.clipboard_check,
+        );
+      case 'degree':
+        return NodeStyle(
+          backgroundColor: const Color(0xFF6A1B9A), // Purple 800
+          textColor: Colors.white,
+          icon: LucideIcons.award,
+        );
+      case 'entrepreneur':
+        return NodeStyle(
+          backgroundColor: const Color(0xFFD32F2F), // Red 700
+          textColor: Colors.white,
+          icon: LucideIcons.lightbulb,
+        );
+      default:
+        return NodeStyle(
+          backgroundColor: const Color(0xFF757575), // Grey 600
+          textColor: Colors.white,
+          icon: LucideIcons.info,
+        );
+    }
+  }
+
   double _getNodeWidth(String type) {
     switch (type) {
       case 'start':
       case 'course_option_detail':
       case 'category':
-        return 200;
+        return 220;
       case 'after10th':
       case 'after12th':
-        return 160;
+        return 180;
       default:
-        return 140;
+        return 160;
     }
   }
 
-  double _getNodeMaxWidth(String type) => 250;
+  double _getNodeMaxWidth(String type) => 280;
 
   double _getNodeHeight(String type) {
     switch (type) {
+      case 'start':
+        return 90;
       case 'category':
+        return 85;
+      case 'course_option_detail':
         return 80;
       default:
-        return 60;
+        return 70;
     }
   }
 
@@ -474,18 +593,22 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
         return 16;
       case 'after10th':
       case 'after12th':
+      case 'course_option_detail':
         return 14;
       default:
-        return 12;
+        return 13;
     }
   }
 
   FontWeight _getFontWeight(String type) {
     switch (type) {
       case 'start':
+      case 'category':
         return FontWeight.bold;
+      case 'course_option_detail':
+        return FontWeight.w600;
       default:
-        return FontWeight.normal;
+        return FontWeight.w500;
     }
   }
 
@@ -501,6 +624,24 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
       }
     });
     _centerGraph();
+
+    // Show success feedback
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(LucideIcons.refresh_cw, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Graph reset successfully!'),
+            ],
+          ),
+          backgroundColor: const Color(0xFF2E7D32),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
 
     widget.onResetGraph?.call();
   }
@@ -532,7 +673,14 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
       final childNode = Node.Id(childId);
       final nodeInfo = nodeHierarchy[childId];
       final color = nodeInfo?['color'] ?? Colors.grey;
-      graph.addEdge(parentNode, childNode, paint: Paint()..color = color);
+      graph.addEdge(
+        parentNode,
+        childNode,
+        paint: Paint()
+          ..color = color.withValues(alpha: 0.7)
+          ..strokeWidth = 2.0
+          ..style = PaintingStyle.stroke,
+      );
     }
 
     setState(() {});
@@ -591,7 +739,13 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
       final nodeInfo = nodeHierarchy[nodeId];
       final color = nodeInfo?['color'] ?? Colors.grey;
       if (!graph.contains(node: childNode)) {
-        graph.addEdge(parentNode, childNode, paint: Paint()..color = color);
+        graph.addEdge(
+          parentNode,
+          childNode,
+          paint: Paint()
+            ..color = color.withOpacity(0.7)
+            ..strokeWidth = 2.0,
+        );
       }
     }
   }
@@ -610,28 +764,50 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: InteractiveViewer(
-        transformationController: _transformationController,
-        boundaryMargin: const EdgeInsets.all(20),
-        minScale: 0.1,
-        maxScale: 3.0,
-        constrained: false,
-        child: GraphView(
-          graph: graph,
-          algorithm: BuchheimWalkerAlgorithm(
-            builder,
-            TreeEdgeRenderer(builder),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFF8F9FA), Color(0xFFE9ECEF)],
+        ),
+      ),
+      child: ClipRect(
+        child: InteractiveViewer(
+          transformationController: _transformationController,
+          boundaryMargin: const EdgeInsets.all(40),
+          minScale: 0.1,
+          maxScale: 3.0,
+          constrained: false,
+          child: GraphView(
+            graph: graph,
+            algorithm: BuchheimWalkerAlgorithm(
+              builder,
+              TreeEdgeRenderer(builder),
+            ),
+            paint: Paint()
+              ..color = Colors.grey.shade400
+              ..strokeWidth = 2.0
+              ..style = PaintingStyle.stroke,
+            builder: (Node node) {
+              final nodeId = (node.key?.value as int?) ?? 0;
+              return rectangleWidget(nodeId);
+            },
           ),
-          paint: Paint()
-            ..color = Colors.grey
-            ..strokeWidth = 1.0,
-          builder: (Node node) {
-            final nodeId = (node.key?.value as int?) ?? 0;
-            return rectangleWidget(nodeId);
-          },
         ),
       ),
     );
   }
+}
+
+class NodeStyle {
+  final Color backgroundColor;
+  final Color textColor;
+  final IconData icon;
+
+  NodeStyle({
+    required this.backgroundColor,
+    required this.textColor,
+    required this.icon,
+  });
 }
