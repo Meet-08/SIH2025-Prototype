@@ -168,3 +168,10 @@ const List<String> careerFields = [
   'Media, Content & Performing Arts',
   'Environmental Science & Sustainability',
 ];
+
+final Map<DateTime, List<String>> eventsData = {
+  DateTime.utc(2025, 10, 15): ['Govt College Admission Deadline'],
+  DateTime.utc(2025, 11, 1): ['Merit-based Scholarship Application Deadline'],
+  DateTime.utc(2025, 12, 5): ['NEET Registration Closes'],
+  DateTime.utc(2026, 1, 10): ['College Counseling Starts'],
+};

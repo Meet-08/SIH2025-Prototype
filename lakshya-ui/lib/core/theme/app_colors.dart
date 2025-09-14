@@ -176,19 +176,16 @@ class AppGradients {
   );
 
   static const LinearGradient careerRoadmapGradient = LinearGradient(
-    colors: [AppColors.primary, AppColors.secondary],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF8E24AA), // Vivid Purple (Creativity & Ambition)
+      Color(0xFF5E35B1), // Deep Indigo (Stability & Professionalism)
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
   );
 
   static const LinearGradient scholarshipGradient = LinearGradient(
     colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static const LinearGradient parentDashboardGradient = LinearGradient(
-    colors: [AppColors.parentPrimary, AppColors.parentSecondary],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

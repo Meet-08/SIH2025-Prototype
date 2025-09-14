@@ -300,7 +300,7 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                             description:
                                 "Keep track of important deadlines and milestones.",
                             icon: LucideIcons.calendar_check,
-                            onTap: () => print('Timeline Tracker Tapped'),
+                            onTap: () => context.pushNamed("/timeline"),
                           ),
                           FeatureCard(
                             title: "Resources",
