@@ -286,7 +286,7 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                             description:
                                 "Explore top colleges and universities that match your goals.",
                             icon: LucideIcons.graduation_cap,
-                            onTap: () => print('Colleges Tapped'),
+                            onTap: () => context.pushNamed("/colleges"),
                           ),
                           FeatureCard(
                             title: "Scholarships",
