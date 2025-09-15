@@ -293,7 +293,7 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                             description:
                                 "Find scholarships and financial aid that suit your profile.",
                             icon: LucideIcons.gift,
-                            onTap: () => print('Scholarships Tapped'),
+                            onTap: () => context.pushNamed("/scholarship"),
                           ),
                           FeatureCard(
                             title: "Timeline",

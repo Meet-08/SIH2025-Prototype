@@ -58,19 +58,31 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.onPrimary,
-        title: Row(
+        flexibleSpace: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: AppGradients.primaryGradient,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+          ),
+        ),
+        title: const Row(
+          spacing: 10,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.brain, size: 24),
-            const SizedBox(width: 8),
-            Text(
-              "Aptitude Assessment",
-              style: context.textTheme.titleLarge?.copyWith(
-                color: AppColors.onPrimary,
-                fontWeight: FontWeight.bold,
+            Icon(LucideIcons.brain, color: Colors.white, size: 28),
+            Expanded(
+              child: Text(
+                'Aptitude Assessment',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

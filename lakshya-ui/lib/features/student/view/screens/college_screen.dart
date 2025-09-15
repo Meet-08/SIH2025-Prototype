@@ -56,7 +56,14 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
         elevation: 0,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            gradient: AppGradients.primaryGradient,
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF00B8A9), // Darker cyan shade
+                Color(0xFF008A7B), // Even darker cyan shade
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
@@ -110,7 +117,7 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.primary.withValues(alpha: 0.05),
+              const Color(0xFF00B8A9).withValues(alpha: 0.05),
               AppColors.background,
               AppColors.background,
             ],
@@ -149,13 +156,13 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.primaryLight.withValues(alpha: 0.1),
+              color: const Color(0xFF00B8A9).withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               LucideIcons.search_x,
               size: 64,
-              color: AppColors.primary,
+              color: Color(0xFF00B8A9),
             ),
           ),
           const SizedBox(height: 24),
@@ -184,9 +191,9 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
         children: [
           GFLoader(
             type: GFLoaderType.ios,
-            loaderColorOne: AppColors.primary,
-            loaderColorTwo: AppColors.secondary,
-            loaderColorThree: AppColors.accent,
+            loaderColorOne: Color(0xFF00B8A9),
+            loaderColorTwo: Color(0xFF008A7B),
+            loaderColorThree: Color(0xFF006B5C),
             size: GFSize.LARGE,
           ),
           SizedBox(height: 24),
@@ -245,7 +252,7 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
               color: Colors.white,
               size: 18,
             ),
-            color: AppColors.primary,
+            color: const Color(0xFF00B8A9),
             shape: GFButtonShape.pills,
           ),
         ],
@@ -293,8 +300,8 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppColors.primary.withValues(alpha: 0.8),
-                    AppColors.primaryDark.withValues(alpha: 0.9),
+                    const Color(0xFF00B8A9).withValues(alpha: 0.8),
+                    const Color(0xFF008A7B).withValues(alpha: 0.9),
                   ],
                 ),
                 borderRadius: const BorderRadius.only(
@@ -553,7 +560,7 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
                         color: Colors.white,
                         size: 16,
                       ),
-                      color: AppColors.primary,
+                      color: const Color(0xFF00B8A9),
                       shape: GFButtonShape.pills,
                       size: GFSize.MEDIUM,
                       textStyle: const TextStyle(
@@ -565,10 +572,10 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
                   const SizedBox(width: 12),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: const Color(0xFF00B8A9).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(25),
                       border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.2),
+                        color: const Color(0xFF00B8A9).withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -578,7 +585,7 @@ class _CollegeScreenState extends ConsumerState<CollegeScreen>
                       },
                       icon: const Icon(
                         LucideIcons.bookmark,
-                        color: AppColors.primary,
+                        color: Color(0xFF00B8A9),
                         size: 20,
                       ),
                       color: Colors.transparent,

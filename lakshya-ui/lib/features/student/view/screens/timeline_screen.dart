@@ -70,7 +70,7 @@ class _TimelineScreenState extends State<TimelineScreen>
   Color _getEventColor(String event) {
     if (event.toLowerCase().contains('admission')) return AppColors.primary;
     if (event.toLowerCase().contains('scholarship')) return AppColors.secondary;
-    if (event.toLowerCase().contains('neet')) return AppColors.primaryDark;
+    if (event.toLowerCase().contains('neet')) return AppColors.accent;
     if (event.toLowerCase().contains('counseling')) {
       return AppColors.parentPrimary;
     }
@@ -161,8 +161,8 @@ class _TimelineScreenState extends State<TimelineScreen>
                     ),
                     GFBadge(
                       text: events.length.toString(),
-                      color: AppColors.primary,
-                      textColor: AppColors.onPrimary,
+                      color: AppColors.accent,
+                      textColor: AppColors.onAccent,
                       size: GFSize.SMALL,
                     ),
                   ],
@@ -275,7 +275,7 @@ class _TimelineScreenState extends State<TimelineScreen>
         elevation: 0,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            gradient: AppGradients.primaryGradient,
+            gradient: AppGradients.timelineGradient,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
@@ -329,7 +329,7 @@ class _TimelineScreenState extends State<TimelineScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.primary.withValues(alpha: 0.05),
+              AppColors.accent.withValues(alpha: 0.05),
               AppColors.background,
               AppColors.background,
             ],
@@ -353,7 +353,7 @@ class _TimelineScreenState extends State<TimelineScreen>
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: AppColors.accent.withValues(alpha: 0.1),
                           blurRadius: 20,
                           spreadRadius: 0,
                           offset: const Offset(0, 5),
@@ -377,7 +377,7 @@ class _TimelineScreenState extends State<TimelineScreen>
                           // Outside days
                           outsideDaysVisible: true,
                           weekendTextStyle: TextStyle(
-                            color: AppColors.primary.withValues(alpha: 0.8),
+                            color: AppColors.accent.withValues(alpha: 0.8),
                             fontWeight: FontWeight.w600,
                           ),
 
@@ -389,11 +389,11 @@ class _TimelineScreenState extends State<TimelineScreen>
 
                           // Selected day
                           selectedDecoration: BoxDecoration(
-                            gradient: AppGradients.primaryGradient,
+                            gradient: AppGradients.accentGradient,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
+                                color: AppColors.accent.withValues(alpha: 0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -474,7 +474,7 @@ class _TimelineScreenState extends State<TimelineScreen>
 
                         daysOfWeekStyle: DaysOfWeekStyle(
                           weekendStyle: TextStyle(
-                            color: AppColors.primary.withValues(alpha: 0.8),
+                            color: AppColors.accent.withValues(alpha: 0.8),
                             fontWeight: FontWeight.w600,
                           ),
                           weekdayStyle: TextStyle(
@@ -578,8 +578,9 @@ class _TimelineScreenState extends State<TimelineScreen>
                                             ),
                                             decoration: BoxDecoration(
                                               color: daysUntil <= 7
-                                                  ? AppColors.secondary
-                                                        .withValues(alpha: 0.1)
+                                                  ? AppColors.accent.withValues(
+                                                      alpha: 0.1,
+                                                    )
                                                   : AppColors.primary
                                                         .withValues(alpha: 0.1),
                                               borderRadius:
@@ -593,7 +594,7 @@ class _TimelineScreenState extends State<TimelineScreen>
                                                   : '$daysUntil days left',
                                               style: TextStyle(
                                                 color: daysUntil <= 7
-                                                    ? AppColors.secondary
+                                                    ? AppColors.accent
                                                     : AppColors.primary,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,

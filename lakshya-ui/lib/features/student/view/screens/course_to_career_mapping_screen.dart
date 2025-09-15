@@ -55,74 +55,36 @@ class _CourseToCareerMappingScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryDark,
-                Color(0xFF0D47A1),
-              ],
-              stops: [0.0, 0.7, 1.0],
-            ),
-            borderRadius: const BorderRadius.only(
+          decoration: const BoxDecoration(
+            gradient: AppGradients.careerRoadmapGradient,
+            borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
         ),
-        foregroundColor: Colors.white,
         title: Row(
           children: [
             GFIconButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => context.pop(),
               icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
               color: Colors.white.withValues(alpha: 0.2),
               shape: GFIconButtonShape.circle,
               size: GFSize.MEDIUM,
             ),
             const SizedBox(width: 16),
-            Hero(
-              tag: 'career_map_icon',
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
-                ),
-                child: const Icon(
-                  LucideIcons.route,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
             const Expanded(
               child: Text(
-                "Career Roadmap Explorer",
+                'Career Roadmap Explorer',
                 style: TextStyle(
-                  fontSize: 18,
+                  color: Colors.white,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
                 ),
               ),
             ),
@@ -135,9 +97,9 @@ class _CourseToCareerMappingScreenState
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.primary.withValues(alpha: 0.05),
-              Colors.grey.shade50,
-              Colors.grey.shade50,
+              AppColors.parentPrimary.withValues(alpha: 0.05),
+              AppColors.background,
+              AppColors.background,
             ],
             stops: const [0.0, 0.3, 1.0],
           ),
@@ -146,29 +108,28 @@ class _CourseToCareerMappingScreenState
           child: Column(
             children: [
               const SizedBox(height: 20),
-
-              // Career field selection container with modern design
               Container(
                 width: double.infinity,
-                margin: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      AppColors.primaryContainer.withValues(alpha: 0.3),
-                      AppColors.secondaryContainer.withValues(alpha: 0.2),
+                      AppColors.parentPrimary.withValues(
+                        alpha: 0.15,
+                      ), // Purple tint
+                      AppColors.parentSecondary.withValues(
+                        alpha: 0.1,
+                      ), // Teal accent
                       Colors.white,
                     ],
                     stops: const [0.0, 0.5, 1.0],
                   ),
-                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      blurRadius: 20,
-                      spreadRadius: 0,
-                      offset: const Offset(0, 5),
+                      color: AppColors.parentPrimary.withValues(alpha: 0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -184,18 +145,18 @@ class _CourseToCareerMappingScreenState
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
                                 colors: [
-                                  AppColors.primary,
-                                  AppColors.primaryDark,
+                                  AppColors.parentPrimary,
+                                  AppColors.scientificDomain,
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.3,
+                                  color: AppColors.parentPrimary.withValues(
+                                    alpha: 0.4,
                                   ),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
                                 ),
                               ],
                             ),
@@ -230,7 +191,9 @@ class _CourseToCareerMappingScreenState
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: AppColors.primary.withValues(alpha: 0.2),
+                              color: AppColors.parentPrimary.withValues(
+                                alpha: 0.3,
+                              ),
                               width: 2,
                             ),
                             gradient: LinearGradient(
@@ -238,9 +201,7 @@ class _CourseToCareerMappingScreenState
                               end: Alignment.bottomRight,
                               colors: [
                                 Colors.white,
-                                AppColors.primaryContainer.withValues(
-                                  alpha: 0.05,
-                                ),
+                                AppColors.parentPrimary.withValues(alpha: 0.05),
                               ],
                             ),
                           ),
@@ -260,14 +221,15 @@ class _CourseToCareerMappingScreenState
                                           Container(
                                             padding: const EdgeInsets.all(6),
                                             decoration: BoxDecoration(
-                                              color: AppColors.primaryContainer,
+                                              color: AppColors.parentPrimary
+                                                  .withValues(alpha: 0.1),
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
                                             child: const Icon(
                                               LucideIcons.briefcase,
                                               size: 16,
-                                              color: AppColors.primary,
+                                              color: AppColors.parentPrimary,
                                             ),
                                           ),
                                           const SizedBox(width: 12),
@@ -309,12 +271,21 @@ class _CourseToCareerMappingScreenState
                               icon: Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryContainer,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColors.parentPrimary.withValues(
+                                        alpha: 0.2,
+                                      ),
+                                      AppColors.parentPrimary.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                    ],
+                                  ),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: const Icon(
                                   LucideIcons.chevron_down,
-                                  color: AppColors.primary,
+                                  color: AppColors.parentPrimary,
                                   size: 18,
                                 ),
                               ),
@@ -333,13 +304,15 @@ class _CourseToCareerMappingScreenState
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.primaryContainer,
-                              AppColors.primaryContainer.withValues(alpha: 0.7),
+                              AppColors.parentAccent.withValues(alpha: 0.2),
+                              AppColors.parentSecondary.withValues(alpha: 0.15),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color: AppColors.parentPrimary.withValues(
+                              alpha: 0.3,
+                            ),
                             width: 1,
                           ),
                         ),
@@ -348,7 +321,12 @@ class _CourseToCareerMappingScreenState
                             Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: AppColors.primary,
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    AppColors.parentPrimary,
+                                    AppColors.scientificDomain,
+                                  ],
+                                ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
@@ -376,12 +354,9 @@ class _CourseToCareerMappingScreenState
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Career roadmap container with modern design
               Expanded(
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.fromLTRB(12, 8, 12, 12),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
@@ -389,20 +364,28 @@ class _CourseToCareerMappingScreenState
                       colors: [
                         Colors.white,
                         AppColors.surface,
-                        AppColors.primaryContainer.withValues(alpha: 0.02),
+                        AppColors.parentPrimary.withValues(alpha: 0.03),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.15),
+                      color: AppColors.parentPrimary.withValues(alpha: 0.2),
                       width: 2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        blurRadius: 20,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 5),
+                        color: AppColors.parentPrimary.withValues(alpha: 0.15),
+                        blurRadius: 15,
+                        offset: const Offset(0, 6),
+                        spreadRadius: 2,
+                      ),
+                      BoxShadow(
+                        color: AppColors.parentSecondary.withValues(
+                          alpha: 0.08,
+                        ),
+                        blurRadius: 25,
+                        offset: const Offset(0, 10),
+                        spreadRadius: -5,
                       ),
                     ],
                   ),
@@ -624,12 +607,12 @@ class _CourseToCareerMappingScreenState
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppColors.primary, AppColors.primaryDark],
+                colors: [AppColors.parentPrimary, AppColors.scientificDomain],
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.4),
+                  color: AppColors.parentPrimary.withValues(alpha: 0.4),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -660,12 +643,12 @@ class _CourseToCareerMappingScreenState
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppColors.secondary, AppColors.secondaryDark],
+                colors: [AppColors.parentPrimary, AppColors.parentSecondary],
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.secondary.withValues(alpha: 0.4),
+                  color: AppColors.parentSecondary.withValues(alpha: 0.4),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -716,17 +699,17 @@ class _CourseToCareerMappingScreenState
                 end: Alignment.bottomRight,
                 colors: [
                   Colors.white,
-                  AppColors.primaryContainer.withValues(alpha: 0.1),
+                  AppColors.parentPrimary.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.2),
+                color: AppColors.parentPrimary.withValues(alpha: 0.2),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.parentPrimary.withValues(alpha: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -742,7 +725,10 @@ class _CourseToCareerMappingScreenState
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [AppColors.primary, AppColors.primaryDark],
+                      colors: [
+                        AppColors.parentPrimary,
+                        AppColors.scientificDomain,
+                      ],
                     ),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(18),
@@ -835,7 +821,7 @@ class _CourseToCareerMappingScreenState
                           color: Colors.white,
                           size: 18,
                         ),
-                        color: AppColors.primary,
+                        color: AppColors.parentPrimary,
                         shape: GFButtonShape.standard,
                         size: GFSize.LARGE,
                       ),
@@ -859,18 +845,18 @@ class _CourseToCareerMappingScreenState
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryContainer.withValues(alpha: 0.1),
+            AppColors.parentPrimary.withValues(alpha: 0.08),
             Colors.white,
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: AppColors.parentPrimary.withValues(alpha: 0.15),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.05),
+            color: AppColors.parentPrimary.withValues(alpha: 0.08),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -883,12 +869,12 @@ class _CourseToCareerMappingScreenState
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.primaryDark],
+                colors: [AppColors.parentPrimary, AppColors.scientificDomain],
               ),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.3),
+                  color: AppColors.parentPrimary.withValues(alpha: 0.3),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
