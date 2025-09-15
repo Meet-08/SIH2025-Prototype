@@ -345,7 +345,7 @@ class _StudentRegisterScreenState extends ConsumerState<StudentRegisterScreen> {
             const Icon(
               LucideIcons.book_open,
               color: AppColors.primary,
-              size: 20,
+              size: 12,
             ),
             const SizedBox(width: 12),
             Expanded(

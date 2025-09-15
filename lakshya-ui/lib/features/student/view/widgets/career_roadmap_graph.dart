@@ -154,7 +154,7 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     final courses = widget.careerMapModel.courses;
     int courseIndex = 0;
     courses.forEach((courseKey, courseData) {
-      final baseCourseId = 1000 + courseIndex * 100;
+      final baseCourseId = 1000 + courseIndex * 1000;
       final courseNodeId = baseCourseId;
       final specializationCategoryId = baseCourseId + 10;
       final specializationStart = specializationCategoryId + 1;

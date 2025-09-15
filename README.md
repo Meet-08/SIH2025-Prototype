@@ -1,317 +1,500 @@
-# SIH 2025 - Stack Nova Prototype
+# 🎯 Lakshya - AI-Powered Career Guidance Platform
 
-> **Lakshya** - A comprehensive Flutter + FastAPI application for Smart India Hackathon 2025
+[![Flutter](https://img.shields.io/badge/Flutter-3.9.0-blue.svg)](https://flutter.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green.svg)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.13-yellow.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
 
-## 🚀 Project Overview
+**Lakshya** is a comprehensive AI-powered career guidance platform designed to help students make informed decisions about their educational and career paths. Developed for Smart India Hackathon 2025, this application provides personalized recommendations, interactive career roadmaps, and comprehensive course-career mapping to guide students towards their ideal career trajectory.
 
-This project is a full-stack application built for SIH 2025, featuring:
+## 🌟 Key Features
 
-- **Frontend**: Flutter mobile application (`lakshya-ui/`)
-- **Backend**: FastAPI Python server (`backend/`)
+### 🎓 **Intelligent Career Assessment**
 
-## 📱 Frontend (Flutter)
+- **AI-Powered Questionnaire**: Comprehensive assessment to understand student interests, aptitudes, and preferences
+- **Personalized Recommendations**: ML-driven recommendations based on individual responses
+- **Multi-Domain Analysis**: Covers Science, Commerce, Arts, Technology, and more
 
-### Prerequisites
+### 🗺️ **Interactive Career Roadmaps**
 
-- Flutter SDK (latest stable version)
-- Dart SDK (included with Flutter)
-- Android Studio / VS Code with Flutter extensions
-- Android SDK for Android development
-- Xcode (for iOS development on macOS)
+- **Visual Career Mapping**: Interactive graph-based visualization of career paths
+- **Course-Career Integration**: Direct mapping between educational courses and career opportunities
+- **Expandable Nodes**: Explore specializations, key subjects, higher education options, and job roles
+- **Multi-Platform Support**: Touch interactions with zoom, pan, and tap-to-expand functionality
 
-### Getting Started
+### 📚 **Comprehensive Database**
 
-1. **Navigate to the Flutter app directory:**
+- **Course Information**: Detailed information about various educational programs
+- **College Recommendations**: Curated list of institutions for different career paths
+- **Scholarship Opportunities**: Information about financial aid and scholarship programs
+- **Career Insights**: Industry trends, job market analysis, and growth opportunities
 
-   ```bash
-   cd lakshya-ui
-   ```
+### 🤖 **AI-Enhanced Recommendations**
 
-2. **Install dependencies:**
+- **Gemini AI Integration**: Advanced natural language processing for career guidance
+- **Contextual Suggestions**: Recommendations based on current market trends and future projections
+- **Personalized Learning Paths**: Customized educational sequences for optimal career preparation
 
-   ```bash
-   flutter pub get
-   ```
+### 📱 **Modern User Experience**
 
-3. **Run the app:**
+- **Responsive Design**: Seamless experience across different screen sizes
+- **Intuitive Navigation**: User-friendly interface with smooth animations
 
-   ```bash
-   # For development
-   flutter run
+## 📱 Application Screenshots
 
-   # For specific platform
-   flutter run -d android
-   flutter run -d ios
-   flutter run -d windows
-   ```
+<div align="center">
 
-4. **Build for production:**
+<table>
+  <tr>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959475.png" width="250" alt="Login Screen"/>
+      <br><b>Login Screen</b>
+    </td>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959479.png" width="250" alt="Register Screen"/>
+      <br><b>Register Screen</b>
+    </td>
+  </tr>
+</table>
 
-   ```bash
-   # Android APK
-   flutter build apk
+<table>
+  <tr>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959526.png" width="250" alt="Home Screen"/>
+      <br><b>Home Screen</b>
+    </td>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959532.png" width="250" alt="Features"/>
+      <br><b>Features</b>
+    </td>
+  </tr>
+</table>
 
-   # Android App Bundle
-   flutter build appbundle
+<table>
+  <tr>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959581.png" width="250" alt="Assessment Results"/>
+      <br><b>Assessment Results</b>
+    </td>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959585.png" width="250" alt="Assessment Results"/>
+      <br><b>Assessment Results</b>
+    </td>
 
-   # iOS
-   flutter build ios
-   ```
+  </tr>
+</table>
 
-### Flutter Project Structure
+<table>
+  <tr>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959591.png" width="250" alt="career roadmap"/>
+      <br><b>Course Details</b>
+    </td>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959597.png" width="250" alt="College List"/>
+      <br><b>College List</b>
+    </td>
+  </tr>
+</table>
 
-```
-lakshya-ui/
-├── lib/
-│   ├── main.dart          # App entry point
-│   ├── core/              # Core utilities and extensions
-│   ├── features/          # Feature-based modules
-│   ├── preview/           # Preview components
-│   └── theme/             # App theming
-├── assets/
-│   └── images/            # Image assets
-├── android/               # Android platform code
-├── ios/                   # iOS platform code
-└── web/                   # Web platform code
-```
+<table>
+  <tr>
+      <td align="center">
+      <img src="prototye-images/Screenshot_1757959602.png" width="250" alt="scholarship list"/>
+      <br><b>scholarship list</b>
+    </td>
+    <td align="center">
+      <img src="prototye-images/Screenshot_1757959612.png" width="250" alt="Timeline Tracker"/>
+      <br><b>Timeline Tracker</b>
+    </td>
+</table>
 
-## 🔧 Backend (FastAPI)
+</div>
 
-### Prerequisites
+---
 
-- Python 3.8+
-- pip (Python package manager)
+## 🛠️ Technology Stack
 
-### Getting Started
+### **Frontend Technologies**
 
-1. **Navigate to the backend directory:**
+| Technology         | Purpose                         | Version |
+| ------------------ | ------------------------------- | ------- |
+| **Flutter**        | Cross-platform mobile framework | 3.9.0+  |
+| **Dart**           | Programming language            | Latest  |
+| **Riverpod**       | State management                | 2.6.1   |
+| **Dio**            | HTTP client for API calls       | 5.9.0   |
+| **GraphView**      | Interactive graph visualization | 1.2.0   |
+| **GetWidget**      | Pre-built UI components         | 7.0.0   |
+| **Flutter Lucide** | Modern icon library             | 1.7.0   |
 
-   ```bash
-   cd backend
-   ```
+### **Backend Technologies**
 
-2. **Create and activate virtual environment:**
+| Technology            | Purpose                     | Version |
+| --------------------- | --------------------------- | ------- |
+| **FastAPI**           | Modern Python web framework | Latest  |
+| **SQLAlchemy**        | Database ORM                | Latest  |
+| **Pydantic**          | Data validation             | Latest  |
+| **Uvicorn**           | ASGI server                 | Latest  |
+| **Google Gemini AI**  | AI/ML recommendations       | Latest  |
+| **PostgreSQL/SQLite** | Database                    | Latest  |
 
-   ```bash
-   # Windows
-   python -m venv myenv
-   myenv\Scripts\activate
+### **Development Tools**
 
-   # macOS/Linux
-   python3 -m venv myenv
-   source myenv/bin/activate
-   ```
+- **VS Code** - Primary IDE
+- **Android Studio** - Android development
+- **Swagger** - API testing
+- **Git** - Version control
+- **Docker** - Containerization
 
-3. **Install dependencies:**
+## 📋 Prerequisites
 
-   ```bash
-   pip install fastapi uvicorn sqlalchemy psycopg2 pydantic
-   ```
+Before setting up Lakshya, ensure you have the following installed:
 
-4. **Run the server:**
+### **System Requirements**
 
-   ```bash
-   uvicorn main:app --reload
-   ```
+- **Operating System**: Windows 10/11, macOS 10.14+, or Linux (Ubuntu 18.04+)
+- **RAM**: 8GB minimum, 16GB recommended
+- **Storage**: 10GB free space
+- **Internet**: Required for initial setup and AI features
 
-   The API will be available at `http://localhost:8000`
+### **Software Dependencies**
 
-   Interactive API documentation: `http://localhost:8000/docs`
-
-### Backend Dependencies
-
-- **FastAPI**: Modern, fast web framework for building APIs
-- **Uvicorn**: ASGI server for running FastAPI
-- **SQLAlchemy**: SQL toolkit and ORM
-- **Psycopg2**: PostgreSQL adapter for Python
-- **Pydantic**: Data validation using Python type annotations
-
-## 🛠️ Development Setup
-
-### 1. Clone the Repository
+#### **Flutter Development**
 
 ```bash
-git clone <repository-url>
-cd "SIH 2025(Stack Nova)/Prototype"
+# Flutter SDK
+flutter --version  # Should be 3.9.0 or higher
+
+# Platform-specific requirements
+# Android: Android Studio + Android SDK (API 21+)
+# iOS: Xcode 14+ (macOS only)
 ```
 
-### 2. Backend Setup
+#### **Backend Development**
+
+```bash
+# Python
+python --version  # Should be 3.9 or higher
+
+# Package manager
+pip --version
+```
+
+#### **Database (Optional)**
+
+- **PostgreSQL** 13+ (Production)
+- **SQLite** (Development - included with Python)
+
+## 🚀 Installation & Setup
+
+### **1. Clone the Repository**
+
+```bash
+git clone https://github.com/Meet-08/SIH2025-Prototype.git
+cd SIH2025-Prototype
+```
+
+### **2. Backend Setup (FastAPI)**
+
+#### **Navigate to Backend Directory**
 
 ```bash
 cd backend
-python -m venv myenv
-# Windows
-myenv\Scripts\activate
-# macOS/Linux
-source myenv/bin/activate
-
-pip install -r requirements.txt  # If you have requirements.txt
-# Or install manually:
-pip install fastapi uvicorn sqlalchemy psycopg2 pydantic
 ```
 
-### 3. Frontend Setup
+#### **Create Virtual Environment**
 
 ```bash
-cd lakshya-ui
+# Windows
+python -m venv myenv
+myenv\Scripts\activate
+
+# macOS/Linux
+python3 -m venv myenv
+source myenv/bin/activate
+```
+
+#### **Install Dependencies**
+
+```bash
+pip install -r requirements.txt
+```
+
+#### **Environment Configuration**
+
+```bash
+# Create .env file
+cp .env.example .env
+
+# Edit .env with your configurations
+# Add your Gemini AI API key
+GEMINI_API_KEY=your_gemini_api_key_here
+DATABASE_URL=sqlite:///./app.db
+```
+
+#### **Database Setup**
+
+```bash
+# Initialize database (automatically handled by main.py)
+python main.py
+```
+
+#### **Start Backend Server**
+
+```bash
+# Development server
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+# Production server
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+The API will be available at `http://localhost:8000`
+API documentation at `http://localhost:8000/docs`
+
+### **3. Frontend Setup (Flutter)**
+
+#### **Navigate to Flutter Directory**
+
+```bash
+cd ../lakshya-ui
+```
+
+#### **Install Dependencies**
+
+```bash
 flutter pub get
 ```
 
-### 4. Run Development Servers
-
-**Terminal 1 - Backend:**
+#### **Environment Configuration**
 
 ```bash
-cd backend
-myenv\Scripts\activate  # Windows
-uvicorn main:app --reload
+# Create .env file in lakshya-ui directory
+touch .env
+
+# Add backend URL
+echo "API_BASE_URL=http://localhost:8000/v1/api" >> .env
 ```
 
-**Terminal 2 - Frontend:**
+#### **Run the Application**
+
+**For Development:**
 
 ```bash
-cd lakshya-ui
+# Run on connected device/emulator
 flutter run
+
+# Run with specific device
+flutter devices
+flutter run -d <device_id>
+
+# Run in debug mode with hot reload
+flutter run --debug
 ```
 
-## 📚 Available Scripts
-
-### Flutter Commands
-
-- `flutter pub get` - Install dependencies
-- `flutter pub upgrade` - Upgrade dependencies
-- `flutter clean` - Clean build artifacts
-- `flutter analyze` - Analyze code for issues
-- `flutter test` - Run tests
-- `flutter build apk` - Build Android APK
-- `flutter build web` - Build for web
-
-### Python/FastAPI Commands
-
-- `uvicorn main:app --reload` - Run development server
-- `pip freeze > requirements.txt` - Generate requirements file
-- `pip install -r requirements.txt` - Install from requirements
-- `python -m pytest` - Run tests (if configured)
-
-## 🗂️ Project Structure
-
-```
-SIH 2025(Stack Nova)/Prototype/
-├── backend/                 # FastAPI backend
-│   ├── myenv/              # Python virtual environment
-│   ├── main.py             # FastAPI app entry point
-│   └── requirements.txt    # Python dependencies
-├── lakshya-ui/             # Flutter frontend
-│   ├── lib/                # Dart source code
-│   ├── assets/             # App assets
-│   ├── android/            # Android platform
-│   ├── ios/                # iOS platform
-│   └── pubspec.yaml        # Flutter dependencies
-├── .gitignore              # Git ignore rules
-└── README.md               # This file
-```
-
-## 🔗 API Integration
-
-The Flutter app communicates with the FastAPI backend through RESTful APIs:
-
-- **Base URL**: `http://localhost:8000` (development)
-- **API Documentation**: `http://localhost:8000/docs`
-- **Alternative Docs**: `http://localhost:8000/redoc`
-
-## 🧪 Testing
-
-### Backend Testing
+**For Production:**
 
 ```bash
-cd backend
-python -m pytest  # If tests are configured
-```
+# Build APK (Android)
+flutter build apk --release
 
-### Frontend Testing
+# Build IPA (iOS - macOS only)
+flutter build ios --release
 
-```bash
-cd lakshya-ui
-flutter test
-```
-
-## 📦 Building for Production
-
-### Backend Deployment
-
-1. Set up production environment variables
-2. Configure database connection
-3. Deploy using services like Heroku, AWS, or DigitalOcean
-
-### Frontend Deployment
-
-```bash
-cd lakshya-ui
-
-# Android
-flutter build appbundle
-# Generate signed bundle for Play Store
-
-# iOS
-flutter build ios
-# Archive and upload to App Store Connect
-
-# Web
+# Build for web
 flutter build web
-# Deploy to web hosting service
+```
+
+## 📱 Usage Guide
+
+### **Getting Started**
+
+1. **Launch the App**: Open Lakshya on your device
+2. **Student Login**: Create an account or login with existing credentials
+3. **Assessment**: Complete the comprehensive career assessment questionnaire
+4. **Results**: View your personalized career recommendations
+5. **Explore**: Navigate through interactive career roadmaps and course information
+
+### **Key Features Usage**
+
+#### **Career Assessment**
+
+- Answer questions about your interests, skills, and preferences
+- Each question is designed to understand your aptitude for different career domains
+- Take your time - honest answers lead to better recommendations
+
+#### **Interactive Career Roadmap**
+
+- **Navigation**: Use pinch-to-zoom and drag gestures
+- **Exploration**: Tap on nodes to expand career paths
+- **Information**: Long-press for detailed information
+- **Reset**: Use the refresh button to reset the view
+
+#### **Course Recommendations**
+
+- Browse recommended courses based on your assessment
+- View detailed information about duration, specializations, and career prospects
+- Explore college options and scholarship opportunities
+
+## 🔧 API Documentation
+
+### **Base URL**
+
+```
+http://localhost:8000/v1/api
+```
+
+### **Key Endpoints**
+
+#### **Student Management**
+
+```http
+POST   /student                    # Create student profile
+GET    /student/{id}               # Get student details
+PUT    /student/{id}               # Update student profile
+```
+
+#### **Career Recommendations**
+
+```http
+POST   /recommendation             # Get career recommendations
+GET    /recommendation/{id}        # Get specific recommendation
+```
+
+#### **Career Roadmaps**
+
+```http
+GET    /course_career/roadmaps/{field}  # Get career roadmap for specific field
+GET    /course_career/courses           # Get all courses
+GET    /course_career/careers           # Get all careers
+```
+
+#### **Educational Resources**
+
+```http
+GET    /course                     # Get all courses
+GET    /course/{id}                # Get specific course
+GET    /college                    # Get all colleges
+GET    /scholarship                # Get all scholarships
 ```
 
 ## 🤝 Contributing
 
+We welcome contributions to make Lakshya even better! Here's how you can contribute:
+
+### **Development Setup**
+
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Set up development environment following the installation guide
+4. Make your changes with appropriate tests
+5. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+6. Push to the branch (`git push origin feature/AmazingFeature`)
+7. Open a Pull Request
 
-## 📋 Team: Stack Nova
+### **Contribution Guidelines**
 
-- Team Member 1
-- Team Member 2
-- Team Member 3
-- Team Member 4
-- Team Member 5
-- Team Member 6
+- Follow the existing code style and conventions
+- Write comprehensive tests for new features
+- Update documentation for any API changes
+- Ensure all tests pass before submitting PR
+- Add meaningful commit messages
+
+## 🔒 Security & Privacy
+
+### **Data Protection**
+
+- All user data is encrypted in transit and at rest
+- Personal information is handled according to privacy best practices
+- No sensitive data is logged or shared with third parties
+- Assessment responses are anonymized for analytics
+
+### **API Security**
+
+- Input validation and sanitization
+- Rate limiting to prevent abuse
+- CORS configuration for secure cross-origin requests
+- Environment variables for sensitive configuration
+
+## 📈 Performance Optimization
+
+### **Frontend Optimization**
+
+- **Image Optimization**: Use appropriate image formats and sizes
+- **State Management**: Efficient Riverpod state updates
+- **Memory Management**: Proper disposal of controllers and streams
+- **Build Optimization**: Use `const` widgets where possible
+
+### **Backend Optimization**
+
+- **Database Indexing**: Optimize queries with proper indexes
+- **Caching**: Implement Redis for frequently accessed data
+- **Connection Pooling**: Configure optimal database connections
+- **API Rate Limiting**: Prevent resource exhaustion
 
 ## 📄 License
 
-This project is developed for Smart India Hackathon 2025.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## 🆘 Troubleshooting
+```
+MIT License
 
-### Common Issues
+Copyright (c) 2025 Team Stack Nova - SIH 2025
 
-1. **Flutter build issues:**
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-   ```bash
-   flutter clean
-   flutter pub get
-   flutter run
-   ```
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-2. **Python environment issues:**
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
-   ```bash
-   deactivate
-   rm -rf myenv  # or rmdir /s myenv on Windows
-   python -m venv myenv
-   # Reactivate and reinstall packages
-   ```
+## 👥 Team & Acknowledgments
 
-3. **Port conflicts:**
-   - FastAPI default: `8000`
-   - Flutter web default: `3000`
-   - Change ports if needed: `uvicorn main:app --port 8080`
+### **Team Stack Nova - SIH 2025**
 
-## 📞 Support
+- **Meet Bhuva**
+- **Swara Natekar**
+- **Het Goswami**
+- **Janvi Bhanderi**
+- **Vraj Gauswami**
+- **Daivagna Parmar**
 
-For questions and support regarding this SIH 2025 project, please contact the Stack Nova team.
+### **Special Thanks**
+
+- **Smart India Hackathon 2025** for providing the platform
+- **Google Gemini AI** for advanced recommendation capabilities
+- **Flutter Community** for excellent development resources
+- **FastAPI Community** for robust backend framework
+- **Open Source Contributors** who made this project possible
+
+### **Feedback & Support**
+
+- **Issues**: [GitHub Issues](https://github.com/Meet-08/SIH2025-Prototype/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Meet-08/SIH2025-Prototype/discussions)
+- **Email**: Contact through GitHub profile
 
 ---
 
-**Built with ❤️ for Smart India Hackathon 2025**
+<div align="center">
+
+**🎯 Lakshya - Empowering Students to Achieve Their Career Goals**
+
+[![Made with Flutter](https://img.shields.io/badge/Made%20with-Flutter-blue.svg)](https://flutter.dev/)
+[![Powered by FastAPI](https://img.shields.io/badge/Powered%20by-FastAPI-green.svg)](https://fastapi.tiangolo.com/)
+[![AI Enhanced](https://img.shields.io/badge/AI%20Enhanced-Gemini-orange.svg)](https://ai.google.dev/)
+
+_Built with ❤️ by Team Stack Nova for SIH 2025_
+
+</div>
