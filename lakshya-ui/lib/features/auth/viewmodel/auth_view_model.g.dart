@@ -6,21 +6,59 @@ part of 'auth_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authViewModelHash() => r'0b02c30408531183dae1a1dd16c5c7daeaa78f17';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [AuthViewModel].
 @ProviderFor(AuthViewModel)
-final authViewModelProvider =
-    AutoDisposeNotifierProvider<AuthViewModel, AsyncValue<UserModel>?>.internal(
-      AuthViewModel.new,
-      name: r'authViewModelProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$authViewModelHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+const authViewModelProvider = AuthViewModelProvider._();
 
-typedef _$AuthViewModel = AutoDisposeNotifier<AsyncValue<UserModel>?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class AuthViewModelProvider
+    extends $NotifierProvider<AuthViewModel, AsyncValue<UserModel>?> {
+  const AuthViewModelProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authViewModelProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$authViewModelHash();
+
+  @$internal
+  @override
+  AuthViewModel create() => AuthViewModel();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<UserModel>? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<UserModel>?>(value),
+    );
+  }
+}
+
+String _$authViewModelHash() => r'46744932c7d08272694d08f27dc9a2a890704d55';
+
+abstract class _$AuthViewModel extends $Notifier<AsyncValue<UserModel>?> {
+  AsyncValue<UserModel>? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref as $Ref<AsyncValue<UserModel>?, AsyncValue<UserModel>?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<UserModel>?, AsyncValue<UserModel>?>,
+              AsyncValue<UserModel>?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

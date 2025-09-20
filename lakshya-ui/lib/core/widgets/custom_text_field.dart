@@ -16,6 +16,7 @@ class CustomTextField extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
   final TextStyle? textStyle;
   final TextStyle? hintStyle;
+  final Widget? suffixIcon;
 
   const CustomTextField({
     super.key,
@@ -31,6 +32,7 @@ class CustomTextField extends StatelessWidget {
     this.contentPadding,
     this.textStyle,
     this.hintStyle,
+    this.suffixIcon,
   });
 
   @override
@@ -76,6 +78,7 @@ class CustomTextField extends StatelessWidget {
                 validator: validator,
               ),
             ),
+            if (suffixIcon != null) ...[const SizedBox(width: 8), suffixIcon!],
           ],
         ),
       ),
@@ -121,7 +124,7 @@ class EmailTextField extends StatelessWidget {
 }
 
 /// Specialized password text field with built-in validation
-class PasswordTextField extends StatelessWidget {
+class PasswordTextField extends StatefulWidget {
   final TextEditingController controller;
   final String? hintText;
   final Color? backgroundColor;
@@ -138,20 +141,41 @@ class PasswordTextField extends StatelessWidget {
   });
 
   @override
+  State<PasswordTextField> createState() => _PasswordTextFieldState();
+}
+
+class _PasswordTextFieldState extends State<PasswordTextField> {
+  bool _isObscured = true;
+
+  void _toggleVisibility() {
+    setState(() {
+      _isObscured = !_isObscured;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CustomTextField(
-      controller: controller,
-      hintText: hintText ?? 'Enter your password',
+      controller: widget.controller,
+      hintText: widget.hintText ?? 'Enter your password',
       icon: LucideIcons.lock,
-      obscureText: true,
-      backgroundColor: backgroundColor,
-      iconColor: iconColor,
+      obscureText: _isObscured,
+      backgroundColor: widget.backgroundColor,
+      iconColor: widget.iconColor,
+      suffixIcon: GestureDetector(
+        onTap: _toggleVisibility,
+        child: Icon(
+          _isObscured ? LucideIcons.eye_off : LucideIcons.eye,
+          color: AppColors.textSecondary.withValues(alpha: 0.7),
+          size: 20,
+        ),
+      ),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your password';
         }
-        if (minLength != null && value.length < minLength!) {
-          return 'Password must be at least $minLength characters';
+        if (widget.minLength != null && value.length < widget.minLength!) {
+          return 'Password must be at least ${widget.minLength} characters';
         }
         return null;
       },

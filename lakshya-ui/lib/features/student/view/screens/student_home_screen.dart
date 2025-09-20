@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:lakshya/core/core.dart';
 import 'package:lakshya/core/provider/current_user_notifier.dart';
+import 'package:lakshya/core/utils/show_snackbar.dart';
 import 'package:lakshya/features/student/view/widgets/feature_card.dart';
 
 class StudentHomeScreen extends ConsumerStatefulWidget {
@@ -16,7 +17,7 @@ class StudentHomeScreen extends ConsumerStatefulWidget {
 class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserNotifierProvider);
+    final currentUser = ref.watch(currentUserProvider);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -37,7 +38,7 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             GestureDetector(
-              onTap: () => print('Profile Tapped'),
+              onTap: () => context.pushNamed('/student-dashboard'),
               child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
@@ -93,9 +94,7 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                       ElevatedButton(
                         onPressed: () {
                           context.pop();
-                          ref
-                              .read(currentUserNotifierProvider.notifier)
-                              .logout();
+                          ref.read(currentUserProvider.notifier).logout();
                           if (mounted) {
                             context.pushNamedAndRemoveUntil(
                               '/student-login',
@@ -307,7 +306,13 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                             description:
                                 "Access study materials and career guidance resources.",
                             icon: LucideIcons.book_open,
-                            onTap: () => print('Resources Tapped'),
+                            onTap: () {
+                              print('Resources Tapped');
+                              showSnackbar(
+                                context,
+                                'These features are coming soon!',
+                              );
+                            },
                           ),
                         ],
                       ),

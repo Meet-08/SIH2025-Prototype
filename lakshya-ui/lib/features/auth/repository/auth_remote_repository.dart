@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakshya/core/failure/app_failure.dart';
 import 'package:lakshya/core/network/dio_client.dart';

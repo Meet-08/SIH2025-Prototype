@@ -1,8 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:graphview/GraphView.dart';
 import 'package:lakshya/features/student/models/career_map_model.dart';
+import 'package:vector_math/vector_math_64.dart' as v;
 
 class CareerRoadmapGraph extends StatefulWidget {
   final CareerMapModel careerMapModel;
@@ -11,9 +16,9 @@ class CareerRoadmapGraph extends StatefulWidget {
 
   const CareerRoadmapGraph({
     super.key,
-    required this.careerMapModel,
     this.onResetGraph,
     this.onShowHelp,
+    required this.careerMapModel,
   });
 
   @override
@@ -34,9 +39,17 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
   final TransformationController _transformationController =
       TransformationController();
 
+  // Keys to measure node positions and viewer
+  final Map<int, GlobalKey> _nodeKeys = {};
+  final GlobalKey _viewerKey = GlobalKey();
+
   late Map<int, dynamic> nodeHierarchy;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+
+  // Scale bounds
+  final double _minScale = 0.2;
+  final double _maxScale = 3.0;
 
   @override
   void initState() {
@@ -52,7 +65,7 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.06).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
   }
@@ -60,6 +73,7 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
   @override
   void dispose() {
     _pulseController.dispose();
+    _transformationController.dispose();
     super.dispose();
   }
 
@@ -315,7 +329,7 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
 
   Widget rectangleWidget(int nodeId) {
     final data = nodeData[nodeId];
-    if (data == null) return Container();
+    if (data == null) return const SizedBox();
 
     final type = (data['type'] ?? 'unknown') as String;
     final title = (data['title'] ?? '') as String;
@@ -324,6 +338,9 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     final isExpanded = expandedNodes.contains(nodeId);
     final hasChildren = (nodeChildren[nodeId]?.isNotEmpty ?? false);
 
+    // Ensure a GlobalKey for this node exists
+    final key = _nodeKeys.putIfAbsent(nodeId, () => GlobalKey());
+
     return AnimatedBuilder(
       animation: _pulseAnimation,
       builder: (context, child) {
@@ -331,13 +348,16 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
           scale: (type == 'start' && hasChildren && !isExpanded)
               ? _pulseAnimation.value
               : 1.0,
-          child: _buildNodeCard(
-            nodeId,
-            type,
-            title,
-            subtitle,
-            isExpanded,
-            hasChildren,
+          child: Container(
+            key: key,
+            child: _buildNodeCard(
+              nodeId,
+              type,
+              title,
+              subtitle,
+              isExpanded,
+              hasChildren,
+            ),
           ),
         );
       },
@@ -388,7 +408,7 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -435,7 +455,7 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: nodeStyle.textColor.withValues(alpha: 0.8),
+                    color: nodeStyle.textColor.withValues(alpha: 0.88),
                     fontSize: _getFontSize(type) - 2,
                     fontWeight: FontWeight.w400,
                   ),
@@ -467,93 +487,93 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     switch (type) {
       case 'start':
         return NodeStyle(
-          backgroundColor: const Color(0xFF00838F), // Cyan 700
+          backgroundColor: const Color(0xFF1E88E5),
           textColor: Colors.white,
-          icon: LucideIcons.flag,
+          icon: LucideIcons.play,
         );
       case 'after10th':
         return NodeStyle(
-          backgroundColor: const Color(0xFF00695C), // Teal 700
+          backgroundColor: const Color(0xFF43A047),
           textColor: Colors.white,
-          icon: LucideIcons.graduation_cap,
+          icon: LucideIcons.school,
         );
       case 'after12th':
         return NodeStyle(
-          backgroundColor: const Color(0xFF3F51B5), // Indigo
+          backgroundColor: const Color(0xFF5E35B1),
           textColor: Colors.white,
-          icon: LucideIcons.book_open,
+          icon: LucideIcons.graduation_cap,
         );
       case 'course_option_detail':
         return NodeStyle(
-          backgroundColor: const Color(0xFF7B1FA2), // Purple 700
+          backgroundColor: const Color(0xFF8E24AA),
           textColor: Colors.white,
-          icon: LucideIcons.book,
+          icon: LucideIcons.book_open,
         );
       case 'category':
         return NodeStyle(
-          backgroundColor: const Color(0xFF455A64), // Blue Grey 700
+          backgroundColor: const Color(0xFF5C6BC0),
           textColor: Colors.white,
-          icon: LucideIcons.folder_open,
+          icon: LucideIcons.layers,
         );
       case 'subject':
         return NodeStyle(
-          backgroundColor: const Color(0xFF546E7A), // Blue Grey 600
+          backgroundColor: const Color(0xFF42A5F5),
           textColor: Colors.white,
-          icon: LucideIcons.file_text,
+          icon: LucideIcons.library,
         );
       case 'entranceExam':
         return NodeStyle(
-          backgroundColor: const Color(0xFFE65100), // Deep Orange 900
+          backgroundColor: const Color(0xFFE65100),
           textColor: Colors.white,
-          icon: LucideIcons.clipboard_list,
+          icon: LucideIcons.file_text,
         );
       case 'specialization':
         return NodeStyle(
-          backgroundColor: const Color(0xFF00897B), // Teal 600
+          backgroundColor: const Color(0xFF26A69A),
           textColor: Colors.white,
-          icon: LucideIcons.star,
+          icon: LucideIcons.target,
         );
       case 'keySubject':
         return NodeStyle(
-          backgroundColor: const Color(0xFF1976D2), // Blue 700
+          backgroundColor: const Color(0xFF3F51B5),
           textColor: Colors.white,
           icon: LucideIcons.bookmark,
         );
       case 'industry':
         return NodeStyle(
-          backgroundColor: const Color(0xFF1565C0), // Blue 800
+          backgroundColor: const Color(0xFF00796B),
           textColor: Colors.white,
-          icon: LucideIcons.building,
+          icon: LucideIcons.factory,
         );
       case 'job':
         return NodeStyle(
-          backgroundColor: const Color(0xFF2E7D32), // Green 800
+          backgroundColor: const Color(0xFF388E3C),
           textColor: Colors.white,
-          icon: LucideIcons.briefcase,
+          icon: LucideIcons.user_check,
         );
       case 'exam':
         return NodeStyle(
-          backgroundColor: const Color(0xFFEF6C00), // Orange 800
+          backgroundColor: const Color(0xFFD84315),
           textColor: Colors.white,
-          icon: LucideIcons.clipboard_check,
+          icon: LucideIcons.shield_check,
         );
       case 'degree':
         return NodeStyle(
-          backgroundColor: const Color(0xFF6A1B9A), // Purple 800
+          backgroundColor: const Color(0xFF512DA8),
           textColor: Colors.white,
-          icon: LucideIcons.award,
+          icon: LucideIcons.scroll,
         );
       case 'entrepreneur':
         return NodeStyle(
-          backgroundColor: const Color(0xFFD32F2F), // Red 700
+          backgroundColor: const Color(0xFFD32F2F),
           textColor: Colors.white,
           icon: LucideIcons.lightbulb,
         );
       default:
         return NodeStyle(
-          backgroundColor: const Color(0xFF757575), // Grey 600
+          backgroundColor: const Color(0xFF607D8B),
           textColor: Colors.white,
-          icon: LucideIcons.info,
+          icon: LucideIcons.circle,
         );
     }
   }
@@ -623,7 +643,7 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
         }
       }
     });
-    _centerGraph();
+    _resetView();
 
     // Show success feedback
     if (mounted) {
@@ -677,14 +697,14 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
         parentNode,
         childNode,
         paint: Paint()
-          ..color = color.withValues(alpha: 0.7)
+          ..color = (color as Color).withValues(alpha: 0.75)
           ..strokeWidth = 2.0
           ..style = PaintingStyle.stroke,
       );
     }
 
     setState(() {});
-    _centerGraph();
+    _focusOnNode(nodeId);
   }
 
   void _collapseNode(int nodeId) {
@@ -706,15 +726,204 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     }
 
     setState(() {});
-    _centerGraph();
+    _focusOnNode(nodeParent[nodeId] ?? 0);
   }
 
-  void _centerGraph() {
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        _transformationController.value = Matrix4.identity();
+  /// Focus on node by computing the node's on-screen center and animating the
+  /// InteractiveViewer transformation so the node becomes centered (clamped).
+  void _focusOnNode(int nodeId) {
+    // Slight delay to let the layout reflow after adding nodes.
+    Future.delayed(const Duration(milliseconds: 120), () async {
+      if (!mounted) return;
+
+      final nodeKey = _nodeKeys[nodeId];
+      final viewerContext = _viewerKey.currentContext;
+      final nodeContext = nodeKey?.currentContext;
+
+      if (viewerContext == null || nodeContext == null) {
+        // fallback: nudge a bit
+        _animateSmallNudge();
+        return;
+      }
+
+      final viewerBox = viewerContext.findRenderObject() as RenderBox;
+      final nodeBox = nodeContext.findRenderObject() as RenderBox?;
+
+      if (nodeBox == null) {
+        _animateSmallNudge();
+        return;
+      }
+
+      // Node center in global coordinates
+      final nodeTopLeftGlobal = nodeBox.localToGlobal(Offset.zero);
+      final nodeCenterGlobal =
+          nodeTopLeftGlobal +
+          Offset(nodeBox.size.width / 2, nodeBox.size.height / 2);
+
+      // Viewer center in global coordinates
+      final viewerTopLeftGlobal = viewerBox.localToGlobal(Offset.zero);
+      final viewerCenterGlobal =
+          viewerTopLeftGlobal +
+          Offset(viewerBox.size.width / 2, viewerBox.size.height / 2);
+
+      final deltaGlobal = nodeCenterGlobal - viewerCenterGlobal;
+
+      // Current matrix and its inverse
+      final current = Matrix4.fromList(_transformationController.value.storage);
+      final inv = Matrix4.fromList(current.storage);
+      // ignore: unrelated_type_equality_checks
+      final bool invertible = inv.invert() == true;
+
+      if (!invertible) {
+        _animateSmallNudge();
+        return;
+      }
+
+      final v.Vector3 deltaLocalVec = inv.transform3(
+        v.Vector3(deltaGlobal.dx, deltaGlobal.dy, 0),
+      );
+
+      // Compute target scale (optionally adjust to show children)
+      final double currentScale = _getScaleFromMatrix(current);
+      double targetScale = currentScale;
+      // if too zoomed out, slightly zoom in when focusing on a node with children
+      if (expandedNodes.contains(nodeId) && currentScale < 0.85) {
+        targetScale = math.min(0.95, _maxScale);
+      }
+      targetScale = targetScale.clamp(_minScale, _maxScale);
+
+      // Build target matrix: start from current and translate by -deltaLocal
+      final Matrix4 target = Matrix4.fromList(current.storage);
+
+      // If scale needs to change, create composed matrices without using deprecated methods
+      if ((targetScale - currentScale).abs() > 0.001) {
+        // We'll scale about the viewer center: translate -> scale -> translate back
+        final Offset viewerCenterLocal = inv
+            .transform3(
+              v.Vector3(viewerCenterGlobal.dx, viewerCenterGlobal.dy, 0),
+            )
+            .let((v) => Offset(v.x, v.y));
+
+        // Build translation and scale matrices explicitly
+        final Matrix4 toViewerCenter = Matrix4.translationValues(
+          viewerCenterLocal.dx,
+          viewerCenterLocal.dy,
+          0.0,
+        );
+        final Matrix4 scaleMat = Matrix4.diagonal3Values(
+          targetScale,
+          targetScale,
+          1.0,
+        );
+        final Matrix4 fromViewerCenter = Matrix4.translationValues(
+          -viewerCenterLocal.dx,
+          -viewerCenterLocal.dy,
+          0.0,
+        );
+
+        // Compose: T(viewerCenter) * S(scale) * T(-viewerCenter)
+        final Matrix4 composed = Matrix4.identity();
+        composed.multiply(toViewerCenter);
+        composed.multiply(scaleMat);
+        composed.multiply(fromViewerCenter);
+
+        // apply current transform afterwards and then translate by -deltaLocal
+        composed.multiply(target);
+        composed.multiply(
+          Matrix4.translationValues(-deltaLocalVec.x, -deltaLocalVec.y, 0.0),
+        );
+
+        _clampAndAnimateToMatrix(composed);
+      } else {
+        // No scale change - simply translate by -deltaLocalVec (use translation matrix)
+        target.multiply(
+          Matrix4.translationValues(-deltaLocalVec.x, -deltaLocalVec.y, 0.0),
+        );
+        _clampAndAnimateToMatrix(target);
       }
     });
+  }
+
+  // Small smooth nudge when we cannot compute exact location.
+  void _animateSmallNudge() {
+    final Matrix4 current = Matrix4.fromList(
+      _transformationController.value.storage,
+    );
+    final Matrix4 t = Matrix4.fromList(current.storage);
+    // small upward translation
+    t.translateByVector3(v.Vector3(0.0, -40.0, 0.0));
+    _clampAndAnimateToMatrix(t);
+  }
+
+  double _getScaleFromMatrix(Matrix4 m) {
+    // assume uniform scaling and no rotation. Use m.storage[0]
+    final storage = m.storage;
+    return storage[0].abs();
+  }
+
+  void _clampAndAnimateToMatrix(Matrix4 targetRaw) {
+    if (!mounted) return;
+
+    // Extract scale and clamp it
+    final double scale = _getScaleFromMatrix(
+      targetRaw,
+    ).clamp(_minScale, _maxScale);
+
+    // Normalize targetRaw scale to clamped scale while preserving translation proportion
+    final Matrix4 normalized = Matrix4.identity();
+    // We'll compute translation so that normalized * child = desired. Simpler approach:
+    // create a new matrix with clamped scale and copy rotation if any (rotation unlikely).
+    normalized.multiply(Matrix4.diagonal3Values(scale, scale, 1.0));
+
+    // Try to copy translation components from targetRaw adjusted for scale difference.
+    // Extract translation from targetRaw
+    final tx = targetRaw.storage[12];
+    final ty = targetRaw.storage[13];
+
+    // When scale changed, translation must be adjusted. We'll set normalized translation to tx,ty
+    normalized.setTranslationRaw(tx, ty, targetRaw.storage[14]);
+
+    // Clamp translation magnitude to avoid runaway values (very large graphs)
+    const double maxTranslate = 20000;
+    final clampedTx = normalized.storage[12].clamp(-maxTranslate, maxTranslate);
+    final clampedTy = normalized.storage[13].clamp(-maxTranslate, maxTranslate);
+    normalized.setTranslationRaw(clampedTx, clampedTy, normalized.storage[14]);
+
+    _animateToMatrix(normalized);
+  }
+
+  void _resetView() {
+    if (mounted) {
+      final targetMatrix = Matrix4.identity();
+      _animateToMatrix(targetMatrix);
+    }
+  }
+
+  void _animateToMatrix(Matrix4 targetMatrix) {
+    final currentMatrix = _transformationController.value;
+
+    // Create a Tween for smooth matrix transformation
+    final AnimationController controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    final Animation<Matrix4> animation =
+        Matrix4Tween(begin: currentMatrix, end: targetMatrix).animate(
+          CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic),
+        );
+
+    animation.addListener(() {
+      _transformationController.value = animation.value;
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
   }
 
   void _hideNodeAndDescendants(int nodeId) {
@@ -743,7 +952,7 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
           parentNode,
           childNode,
           paint: Paint()
-            ..color = color.withOpacity(0.7)
+            ..color = (color as Color).withValues(alpha: 0.75)
             ..strokeWidth = 2.0,
         );
       }
@@ -774,10 +983,11 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
       ),
       child: ClipRect(
         child: InteractiveViewer(
+          key: _viewerKey,
           transformationController: _transformationController,
-          boundaryMargin: const EdgeInsets.all(40),
-          minScale: 0.1,
-          maxScale: 3.0,
+          boundaryMargin: const EdgeInsets.all(1000),
+          minScale: _minScale,
+          maxScale: _maxScale,
           constrained: false,
           child: GraphView(
             graph: graph,
@@ -810,4 +1020,9 @@ class NodeStyle {
     required this.textColor,
     required this.icon,
   });
+}
+
+// tiny helper to use returned Vector3 from transform3 inline
+extension _Let<T> on T {
+  R let<R>(R Function(T) fn) => fn(this);
 }

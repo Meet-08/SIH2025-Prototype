@@ -6,25 +6,70 @@ part of 'college_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(CollegeViewModel)
+const collegeViewModelProvider = CollegeViewModelProvider._();
+
+final class CollegeViewModelProvider
+    extends
+        $NotifierProvider<CollegeViewModel, AsyncValue<List<CollegeModel>>?> {
+  const CollegeViewModelProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'collegeViewModelProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$collegeViewModelHash();
+
+  @$internal
+  @override
+  CollegeViewModel create() => CollegeViewModel();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<List<CollegeModel>>? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<List<CollegeModel>>?>(
+        value,
+      ),
+    );
+  }
+}
+
 String _$collegeViewModelHash() => r'b60efa876c0d16d42d5136d7fd0bd2bf09c9168e';
 
-/// See also [CollegeViewModel].
-@ProviderFor(CollegeViewModel)
-final collegeViewModelProvider =
-    AutoDisposeNotifierProvider<
-      CollegeViewModel,
-      AsyncValue<List<CollegeModel>>?
-    >.internal(
-      CollegeViewModel.new,
-      name: r'collegeViewModelProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$collegeViewModelHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$CollegeViewModel =
-    AutoDisposeNotifier<AsyncValue<List<CollegeModel>>?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$CollegeViewModel
+    extends $Notifier<AsyncValue<List<CollegeModel>>?> {
+  AsyncValue<List<CollegeModel>>? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<List<CollegeModel>>?,
+              AsyncValue<List<CollegeModel>>?
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<List<CollegeModel>>?,
+                AsyncValue<List<CollegeModel>>?
+              >,
+              AsyncValue<List<CollegeModel>>?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

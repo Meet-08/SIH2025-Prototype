@@ -342,12 +342,6 @@ class _StudentRegisterScreenState extends ConsumerState<StudentRegisterScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
-            const Icon(
-              LucideIcons.book_open,
-              color: AppColors.primary,
-              size: 12,
-            ),
-            const SizedBox(width: 12),
             Expanded(
               child: DropdownButtonFormField<String>(
                 isDense: true,

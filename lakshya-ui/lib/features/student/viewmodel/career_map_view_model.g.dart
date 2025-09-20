@@ -6,25 +6,65 @@ part of 'career_map_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(CareerMapViewModel)
+const careerMapViewModelProvider = CareerMapViewModelProvider._();
+
+final class CareerMapViewModelProvider
+    extends $NotifierProvider<CareerMapViewModel, AsyncValue<CareerMapModel>?> {
+  const CareerMapViewModelProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'careerMapViewModelProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$careerMapViewModelHash();
+
+  @$internal
+  @override
+  CareerMapViewModel create() => CareerMapViewModel();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<CareerMapModel>? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<CareerMapModel>?>(value),
+    );
+  }
+}
+
 String _$careerMapViewModelHash() =>
     r'50519196898cc2949ad6a41ebe0c59e4f2ed4e9e';
 
-/// See also [CareerMapViewModel].
-@ProviderFor(CareerMapViewModel)
-final careerMapViewModelProvider =
-    AutoDisposeNotifierProvider<
-      CareerMapViewModel,
-      AsyncValue<CareerMapModel>?
-    >.internal(
-      CareerMapViewModel.new,
-      name: r'careerMapViewModelProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$careerMapViewModelHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$CareerMapViewModel = AutoDisposeNotifier<AsyncValue<CareerMapModel>?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$CareerMapViewModel
+    extends $Notifier<AsyncValue<CareerMapModel>?> {
+  AsyncValue<CareerMapModel>? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<AsyncValue<CareerMapModel>?, AsyncValue<CareerMapModel>?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<CareerMapModel>?,
+                AsyncValue<CareerMapModel>?
+              >,
+              AsyncValue<CareerMapModel>?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
