@@ -268,7 +268,7 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                           FeatureCard(
                             title: "Aptitude Quiz",
                             description:
-                                "Discover your strengths and interests. Take or retake the quiz anytime.",
+                                "Discover your strengths and interests.",
                             icon: LucideIcons.brain,
                             onTap: () => context.pushNamed("/aptitude-quiz"),
                           ),

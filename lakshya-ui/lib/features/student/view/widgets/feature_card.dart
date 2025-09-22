@@ -72,6 +72,7 @@ class _FeatureCardState extends State<FeatureCard>
             onTapUp: _onTapUp,
             onTapCancel: _onTapCancel,
             child: Container(
+              height: 480,
               margin: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
@@ -186,7 +187,7 @@ class _FeatureCardState extends State<FeatureCard>
                             height: 1.3,
                             fontWeight: FontWeight.w400,
                           ),
-                          maxLines: 3,
+                          maxLines: 5,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
