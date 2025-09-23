@@ -15,18 +15,20 @@ class MultipleChoiceOptionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: question.options!.asMap().entries.map((entry) {
-        final int index = entry.key;
-        final String option = entry.value;
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
+    final opts = question.options ?? const <String>[];
+    return ListView.separated(
+      itemCount: opts.length,
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.zero,
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
+      itemBuilder: (context, i) {
+        final option = opts[i];
+        return SizedBox(
           width: double.infinity,
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () => onOptionSelected(index),
+              onTap: () => onOptionSelected(i),
               borderRadius: BorderRadius.circular(12),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
@@ -38,12 +40,12 @@ class MultipleChoiceOptionsWidget extends StatelessWidget {
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _getOptionColor(index).withValues(alpha: 0.3),
+                    color: _getOptionColor(i).withValues(alpha: 0.3),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: _getOptionColor(index).withValues(alpha: 0.08),
+                      color: _getOptionColor(i).withValues(alpha: 0.08),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -56,20 +58,20 @@ class MultipleChoiceOptionsWidget extends StatelessWidget {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: _getOptionColor(index).withValues(alpha: 0.1),
+                        color: _getOptionColor(i).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: _getOptionColor(index),
+                          color: _getOptionColor(i),
                           width: 1.5,
                         ),
                       ),
                       child: Center(
                         child: Text(
-                          String.fromCharCode(65 + index), // A, B, C, D
+                          String.fromCharCode(65 + i), // A, B, C, D
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: _getOptionColor(index),
+                            color: _getOptionColor(i),
                           ),
                         ),
                       ),
@@ -92,7 +94,7 @@ class MultipleChoiceOptionsWidget extends StatelessWidget {
                     // Arrow icon - smaller
                     Icon(
                       LucideIcons.chevron_right,
-                      color: _getOptionColor(index),
+                      color: _getOptionColor(i),
                       size: 16,
                     ),
                   ],
@@ -101,7 +103,7 @@ class MultipleChoiceOptionsWidget extends StatelessWidget {
             ),
           ),
         );
-      }).toList(),
+      },
     );
   }
 

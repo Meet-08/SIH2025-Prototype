@@ -1,10 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:graphview/GraphView.dart';
 import 'package:lakshya/features/student/models/career_map_model.dart';
 import 'package:vector_math/vector_math_64.dart' as v;
@@ -45,7 +44,9 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
 
   late Map<int, dynamic> nodeHierarchy;
   late AnimationController _pulseController;
+  late AnimationController _glowController;
   late Animation<double> _pulseAnimation;
+  late Animation<double> _glowAnimation;
 
   // Scale bounds
   final double _minScale = 0.2;
@@ -64,31 +65,42 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     _pulseController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
-    )..repeat();
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.06).animate(
+    )..repeat(reverse: true);
+    
+    _glowController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..repeat(reverse: true);
+    
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+    
+    _glowAnimation = Tween<double>(begin: 0.3, end: 0.6).animate(
+      CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
     );
   }
 
   @override
   void dispose() {
     _pulseController.dispose();
+    _glowController.dispose();
     _transformationController.dispose();
     super.dispose();
   }
 
   void _initializeBuilder() {
     builder = BuchheimWalkerConfiguration()
-      ..siblingSeparation = 100
-      ..levelSeparation = 140
-      ..subtreeSeparation = 120
+      ..siblingSeparation = 120
+      ..levelSeparation = 160
+      ..subtreeSeparation = 140
       ..orientation = BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM;
   }
 
   void _initializeHierarchy() {
     nodeHierarchy = {};
 
-    // Root
+    // Root - Using orange theme
     nodeHierarchy[0] = {
       'data': {
         'type': 'start',
@@ -102,13 +114,10 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     nodeHierarchy[1] = {
       'data': {
         'type': 'after10th',
-        'title':
-            'After 10th - ${widget.careerMapModel.after10th.recommendedStream}',
-        'subtitle':
-            'Recommended: ${widget.careerMapModel.after10th.recommendedStream}',
+        'title': 'Science Stream',
+        'subtitle': 'PCM / PCB / PCMB',
       },
-      'children': [2],
-      'color': Colors.teal,
+      'children': [],
     };
 
     // Subjects under After 10th
@@ -116,23 +125,27 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     final after10SubjectsChildren = <int>[];
     int subjectIdStart = 101;
     for (int i = 0; i < subjects.length; i++) {
-      after10SubjectsChildren.add(subjectIdStart + i);
-      nodeHierarchy[subjectIdStart + i] = {
-        'data': {'type': 'subject', 'title': subjects[i], 'subtitle': ''},
-        'children': <int>[],
-        'color': Colors.blueGrey,
+      final subjectId = subjectIdStart + i;
+      nodeHierarchy[subjectId] = {
+        'data': {
+          'type': 'subject',
+          'title': subjects[i],
+          'subtitle': '',
+        },
+        'children': [],
       };
+      after10SubjectsChildren.add(subjectId);
     }
+    nodeHierarchy[1]!['children'] = after10SubjectsChildren;
 
     // After 12th Node
     nodeHierarchy[2] = {
       'data': {
         'type': 'after12th',
         'title': 'After 12th',
-        'subtitle': 'Entrance Exams & Course Options',
+        'subtitle': 'Choose your path',
       },
       'children': [200, 300],
-      'color': Colors.indigo,
     };
 
     // Entrance exams category (200)
@@ -140,163 +153,85 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     final examChildIds = <int>[];
     int examStart = 201;
     for (int i = 0; i < exams.length; i++) {
-      examChildIds.add(examStart + i);
-      nodeHierarchy[examStart + i] = {
+      final examId = examStart + i;
+      nodeHierarchy[examId] = {
         'data': {'type': 'entranceExam', 'title': exams[i], 'subtitle': ''},
-        'children': <int>[],
-        'color': Colors.orange,
+        'children': [],
       };
+      examChildIds.add(examId);
     }
     nodeHierarchy[200] = {
       'data': {'type': 'category', 'title': 'Entrance Exams', 'subtitle': ''},
       'children': examChildIds,
-      'color': Colors.orange,
     };
 
     // Course Options category placeholder (300)
     nodeHierarchy[300] = {
       'data': {
         'type': 'category',
-        'title': 'Course Options (12th)',
-        'subtitle': '',
+        'title': 'Course Options',
+        'subtitle': 'Available courses',
       },
-      'children': <int>[],
-      'color': Colors.deepPurple,
+      'children': [],
     };
 
     // Courses (detailed nodes)
     final courses = widget.careerMapModel.courses;
     int courseIndex = 0;
     courses.forEach((courseKey, courseData) {
-      final baseCourseId = 1000 + courseIndex * 1000;
-      final courseNodeId = baseCourseId;
-      final specializationCategoryId = baseCourseId + 10;
-      final specializationStart = specializationCategoryId + 1;
-      final keySubjectsCategoryId = baseCourseId + 20;
-      final keySubjectStart = keySubjectsCategoryId + 1;
-      final careerPathsCategoryId = baseCourseId + 30;
-      final careerCategoryStart = careerPathsCategoryId + 1;
-
-      nodeHierarchy[courseNodeId] = {
+      final courseId = 1000 + courseIndex;
+      
+      // Create main course node
+      nodeHierarchy[courseId] = {
         'data': {
           'type': 'course_option_detail',
-          'title': courseData.name,
-          'subtitle': '${courseData.duration} • $courseKey',
+          'title': courseKey,
+          'subtitle': courseData.duration,
         },
-        'children': <int>[],
-        'color': Colors.purple,
+        'children': [],
       };
 
-      (nodeHierarchy[300]['children'] as List).add(courseNodeId);
-
-      // Specializations
-      final specs = courseData.specializations;
-      final specIds = <int>[];
-      for (int i = 0; i < specs.length; i++) {
-        final sid = specializationStart + i;
-        specIds.add(sid);
-        nodeHierarchy[sid] = {
-          'data': {'type': 'specialization', 'title': specs[i], 'subtitle': ''},
-          'children': <int>[],
-          'color': Colors.teal.shade300,
+      // Add specializations
+      final specializations = courseData.specializations;
+      final specializationIds = <int>[];
+      for (int i = 0; i < specializations.length; i++) {
+        final specId = courseId * 10 + i + 1;
+        nodeHierarchy[specId] = {
+          'data': {
+            'type': 'specialization',
+            'title': specializations[i],
+            'subtitle': '',
+          },
+          'children': [],
         };
-      }
-      nodeHierarchy[specializationCategoryId] = {
-        'data': {
-          'type': 'category',
-          'title': 'Specializations',
-          'subtitle': '',
-        },
-        'children': specIds,
-        'color': Colors.teal,
-      };
+        specializationIds.add(specId);
 
-      // Key Subjects
-      final ks = courseData.keySubjects;
-      final ksIds = <int>[];
-      for (int i = 0; i < ks.length; i++) {
-        final kid = keySubjectStart + i;
-        ksIds.add(kid);
-        nodeHierarchy[kid] = {
-          'data': {'type': 'keySubject', 'title': ks[i], 'subtitle': ''},
-          'children': <int>[],
-          'color': Colors.blueAccent,
-        };
-      }
-      nodeHierarchy[keySubjectsCategoryId] = {
-        'data': {'type': 'category', 'title': 'Key Subjects', 'subtitle': ''},
-        'children': ksIds,
-        'color': Colors.blueAccent,
-      };
-
-      // Career Paths with subcategories
-      final cp = courseData.careerPaths;
-      int catPtr = careerCategoryStart;
-      final cpCategoryIds = <int>[];
-
-      void addListCategory(
-        String title,
-        List<String> items,
-        Color color,
-        String type,
-      ) {
-        if (items.isEmpty) return;
-        final thisCategoryId = catPtr;
-        catPtr += 100;
-        cpCategoryIds.add(thisCategoryId);
-
-        final itemIds = <int>[];
-        int itemStart = thisCategoryId + 1;
-        for (int i = 0; i < items.length; i++) {
-          final iid = itemStart + i;
-          itemIds.add(iid);
-          nodeHierarchy[iid] = {
-            'data': {'type': type, 'title': items[i], 'subtitle': ''},
-            'children': <int>[],
-            'color': color,
+        // Add career paths for each specialization
+        final careerPaths = courseData.careerPaths;
+        final careerIds = <int>[];
+        final careerPathsList = careerPaths.jobRoles.take(3).toList();
+        for (int j = 0; j < careerPathsList.length; j++) {
+          final careerId = specId * 10 + j + 1;
+          nodeHierarchy[careerId] = {
+            'data': {
+              'type': 'job',
+              'title': careerPathsList[j],
+              'subtitle': '',
+            },
+            'children': [],
           };
+          careerIds.add(careerId);
         }
-
-        nodeHierarchy[thisCategoryId] = {
-          'data': {'type': 'category', 'title': title, 'subtitle': ''},
-          'children': itemIds,
-          'color': color,
-        };
+        if (careerIds.isNotEmpty) {
+          nodeHierarchy[specId]!['children'] = careerIds;
+        }
       }
 
-      addListCategory('Industries', cp.industries, Colors.blue, 'industry');
-      addListCategory('Job Roles', cp.jobRoles, Colors.green, 'job');
-      addListCategory(
-        'Government Exams',
-        cp.governmentExams,
-        Colors.orange,
-        'exam',
-      );
-      addListCategory(
-        'Entrepreneurship',
-        cp.entrepreneurialOptions,
-        Colors.red,
-        'entrepreneur',
-      );
-      addListCategory(
-        'Higher Education',
-        cp.higherEducation,
-        Colors.purple,
-        'degree',
-      );
+      if (specializationIds.isNotEmpty) {
+        nodeHierarchy[courseId]!['children'] = specializationIds;
+      }
 
-      nodeHierarchy[careerPathsCategoryId] = {
-        'data': {'type': 'category', 'title': 'Career Paths', 'subtitle': ''},
-        'children': cpCategoryIds,
-        'color': Colors.indigo,
-      };
-
-      nodeHierarchy[courseNodeId]['children'] = [
-        specializationCategoryId,
-        keySubjectsCategoryId,
-        careerPathsCategoryId,
-      ];
-
+      nodeHierarchy[300]!['children'].add(courseId);
       courseIndex++;
     });
 
@@ -309,9 +244,10 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     nodeParent.clear();
 
     nodeHierarchy.forEach((nodeId, nodeInfo) {
-      nodeData[nodeId] = Map<String, dynamic>.from(nodeInfo['data'] as Map);
-      nodeChildren[nodeId] = List<int>.from(nodeInfo['children'] as List);
-      for (int childId in nodeChildren[nodeId]!) {
+      nodeData[nodeId] = nodeInfo['data'];
+      final children = (nodeInfo['children'] as List<int>?) ?? [];
+      nodeChildren[nodeId] = children;
+      for (int childId in children) {
         nodeParent[childId] = nodeId;
       }
     });
@@ -342,237 +278,433 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     final key = _nodeKeys.putIfAbsent(nodeId, () => GlobalKey());
 
     return AnimatedBuilder(
-      animation: _pulseAnimation,
+      animation: Listenable.merge([_pulseAnimation, _glowAnimation]),
       builder: (context, child) {
+        final scale = nodeId == 0 ? _pulseAnimation.value : 1.0;
         return Transform.scale(
-          scale: (type == 'start' && hasChildren && !isExpanded)
-              ? _pulseAnimation.value
-              : 1.0,
-          child: Container(
-            key: key,
-            child: _buildNodeCard(
-              nodeId,
-              type,
-              title,
-              subtitle,
-              isExpanded,
-              hasChildren,
-            ),
+          scale: scale,
+          child: _buildModernNodeCard(
+            nodeId,
+            type,
+            title,
+            subtitle,
+            isExpanded,
+            hasChildren,
+            key,
           ),
         );
       },
     );
   }
 
-  Widget _buildNodeCard(
+  Widget _buildModernNodeCard(
     int nodeId,
     String type,
     String title,
     String subtitle,
     bool isExpanded,
     bool hasChildren,
+    GlobalKey key,
   ) {
-    final nodeStyle = _getNodeStyle(type);
+    final nodeStyle = _getModernNodeStyle(type);
+    final isRootNode = nodeId == 0;
 
-    return GFCard(
-      margin: const EdgeInsets.all(4),
-      elevation: isExpanded ? 8 : 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      content: InkWell(
+    return Container(
+      key: key,
+      width: _getNodeWidth(type),
+      constraints: BoxConstraints(
+        maxWidth: _getNodeMaxWidth(type),
+        minHeight: _getNodeHeight(type),
+      ),
+      child: GestureDetector(
         onTap: hasChildren ? () => _expandNode(nodeId) : null,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
-            color: nodeStyle.backgroundColor,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          constraints: BoxConstraints(
-            minWidth: _getNodeWidth(type),
-            maxWidth: _getNodeMaxWidth(type),
-            minHeight: _getNodeHeight(type),
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: type == 'category'
-                ? 20
-                : (type == 'course_option_detail' ? 16 : 12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Icon and expansion indicator row
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      nodeStyle.icon,
-                      color: nodeStyle.textColor,
-                      size: type == 'course_option_detail' ? 24 : 20,
-                    ),
-                  ),
-                  if (hasChildren) ...[
-                    const SizedBox(width: 8),
-                    GFBadge(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      shape: GFBadgeShape.circle,
-                      child: Icon(
-                        isExpanded
-                            ? LucideIcons.chevron_up
-                            : LucideIcons.chevron_down,
-                        color: nodeStyle.backgroundColor,
-                        size: 14,
-                      ),
-                    ),
-                  ],
-                ],
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.white.withOpacity(isExpanded ? 0.6 : 0.3),
+              width: isExpanded ? 2.5 : 1.5,
+            ),
+            boxShadow: [
+              // Neumorphism light shadow
+              BoxShadow(
+                color: Colors.white.withOpacity(0.7),
+                blurRadius: isExpanded ? 20 : 15,
+                offset: Offset(
+                  isExpanded ? -8 : -6,
+                  isExpanded ? -8 : -6,
+                ),
               ),
-              const SizedBox(height: 8),
-
-              // Title
-              Text(
-                title,
-                style: TextStyle(
-                  color: nodeStyle.textColor,
-                  fontSize: _getFontSize(type),
-                  fontWeight: _getFontWeight(type),
-                  letterSpacing: 0.5,
+              // Neumorphism dark shadow
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: isExpanded ? 20 : 15,
+                offset: Offset(
+                  isExpanded ? 8 : 6,
+                  isExpanded ? 8 : 6,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
-
-              // Subtitle (if exists)
-              if (subtitle.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: nodeStyle.textColor.withValues(alpha: 0.88),
-                    fontSize: _getFontSize(type) - 2,
-                    fontWeight: FontWeight.w400,
+              // Orange glow for root and expanded nodes
+              if (isRootNode || isExpanded)
+                BoxShadow(
+                  color: nodeStyle.primaryColor.withOpacity(
+                    isRootNode ? _glowAnimation.value : 0.4,
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  blurRadius: isRootNode ? 25 : 20,
+                  offset: const Offset(0, 5),
                 ),
-              ],
-
-              // Progress indicator for expanded nodes
-              if (isExpanded) ...[
-                const SizedBox(height: 8),
-                GFProgressBar(
-                  percentage: 1,
-                  backgroundColor: Colors.white.withValues(alpha: 0.3),
-                  progressBarColor: Colors.white,
-                  lineHeight: 3,
-                  radius: 1.5,
-                ),
-              ],
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: nodeStyle.gradient,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withOpacity(0.2),
+                        Colors.white.withOpacity(0.05),
+                        Colors.black.withOpacity(0.05),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Icon and expansion indicator row
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.25),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.5),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              nodeStyle.icon,
+                              color: Colors.white,
+                              size: type == 'course_option_detail' ? 28 : 24,
+                            ),
+                          ),
+                          if (hasChildren) ...[
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.9),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                isExpanded
+                                    ? LucideIcons.chevron_up
+                                    : LucideIcons.chevron_down,
+                                color: nodeStyle.primaryColor,
+                                size: 16,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Title with enhanced styling
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: _getFontSize(type),
+                          fontWeight: _getFontWeight(type),
+                          letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.3),
+                              offset: const Offset(0, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      // Subtitle (if exists)
+                      if (subtitle.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: _getFontSize(type) - 2,
+                            fontWeight: FontWeight.w500,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.2),
+                                offset: const Offset(0, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+
+                      // Progress indicator for expanded nodes
+                      if (isExpanded) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          height: 4,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.white.withOpacity(0.3),
+                                Colors.white,
+                                Colors.white.withOpacity(0.3),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  NodeStyle _getNodeStyle(String type) {
+  ModernNodeStyle _getModernNodeStyle(String type) {
+    // Base orange gradient colors from the feature card
+    const primaryOrange = Color(0xFFFF9500);
+    const secondaryOrange = Color(0xFFFF6B35);
+    
     switch (type) {
       case 'start':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF1E88E5),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: primaryOrange,
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [primaryOrange, secondaryOrange],
+          ),
           icon: LucideIcons.play,
         );
       case 'after10th':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF43A047),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFF8C00),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF8C00),
+              const Color(0xFFFF7F50),
+            ],
+          ),
           icon: LucideIcons.school,
         );
       case 'after12th':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF5E35B1),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFF7F50),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF7F50),
+              const Color(0xFFFF6347),
+            ],
+          ),
           icon: LucideIcons.graduation_cap,
         );
       case 'course_option_detail':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF8E24AA),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFF6347),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF6347),
+              const Color(0xFFFF4500),
+            ],
+          ),
           icon: LucideIcons.book_open,
         );
       case 'category':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF5C6BC0),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFF7043),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF7043),
+              const Color(0xFFFF5722),
+            ],
+          ),
           icon: LucideIcons.layers,
         );
       case 'subject':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF42A5F5),
-          textColor: Colors.white,
-          icon: LucideIcons.library,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFF8A65),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF8A65),
+              const Color(0xFFFF7043),
+            ],
+          ),
+          icon: LucideIcons.book,
         );
       case 'entranceExam':
-        return NodeStyle(
-          backgroundColor: const Color(0xFFE65100),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFF9800),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF9800),
+              const Color(0xFFFF8F00),
+            ],
+          ),
           icon: LucideIcons.file_text,
         );
       case 'specialization':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF26A69A),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFFA726),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFFA726),
+              const Color(0xFFFF9800),
+            ],
+          ),
           icon: LucideIcons.target,
         );
       case 'keySubject':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF3F51B5),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFFB74D),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFFB74D),
+              const Color(0xFFFFA726),
+            ],
+          ),
           icon: LucideIcons.bookmark,
         );
       case 'industry':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF00796B),
-          textColor: Colors.white,
-          icon: LucideIcons.factory,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFFCC02),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFFCC02),
+              const Color(0xFFFFB300),
+            ],
+          ),
+          icon: LucideIcons.building,
         );
       case 'job':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF388E3C),
-          textColor: Colors.white,
-          icon: LucideIcons.user_check,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFFD54F),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFFD54F),
+              const Color(0xFFFFCC02),
+            ],
+          ),
+          icon: LucideIcons.briefcase,
         );
       case 'exam':
-        return NodeStyle(
-          backgroundColor: const Color(0xFFD84315),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFFE082),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFFE082),
+              const Color(0xFFFFD54F),
+            ],
+          ),
           icon: LucideIcons.shield_check,
         );
       case 'degree':
-        return NodeStyle(
-          backgroundColor: const Color(0xFF512DA8),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFFF59D),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFFF59D),
+              const Color(0xFFFFE082),
+            ],
+          ),
           icon: LucideIcons.scroll,
         );
       case 'entrepreneur':
-        return NodeStyle(
-          backgroundColor: const Color(0xFFD32F2F),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFF5722),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF5722),
+              const Color(0xFFE64A19),
+            ],
+          ),
           icon: LucideIcons.lightbulb,
         );
       default:
-        return NodeStyle(
-          backgroundColor: const Color(0xFF607D8B),
-          textColor: Colors.white,
+        return ModernNodeStyle(
+          primaryColor: const Color(0xFFFF9500),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF9500).withOpacity(0.8),
+              const Color(0xFFFF6B35).withOpacity(0.8),
+            ],
+          ),
           icon: LucideIcons.circle,
         );
     }
@@ -583,52 +715,52 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
       case 'start':
       case 'course_option_detail':
       case 'category':
-        return 220;
+        return 240;
       case 'after10th':
       case 'after12th':
-        return 180;
+        return 200;
       default:
-        return 160;
+        return 180;
     }
   }
 
-  double _getNodeMaxWidth(String type) => 280;
+  double _getNodeMaxWidth(String type) => 300;
 
   double _getNodeHeight(String type) {
     switch (type) {
       case 'start':
-        return 90;
-      case 'category':
-        return 85;
+        return 100;
       case 'course_option_detail':
-        return 80;
+        return 110;
+      case 'category':
+        return 95;
       default:
-        return 70;
+        return 85;
     }
   }
 
   double _getFontSize(String type) {
     switch (type) {
       case 'start':
-        return 16;
-      case 'after10th':
-      case 'after12th':
+        return 18;
       case 'course_option_detail':
-        return 14;
+        return 16;
+      case 'category':
+        return 15;
       default:
-        return 13;
+        return 14;
     }
   }
 
   FontWeight _getFontWeight(String type) {
     switch (type) {
       case 'start':
-      case 'category':
-        return FontWeight.bold;
+        return FontWeight.w800;
       case 'course_option_detail':
-        return FontWeight.w600;
+      case 'category':
+        return FontWeight.w700;
       default:
-        return FontWeight.w500;
+        return FontWeight.w600;
     }
   }
 
@@ -636,29 +768,23 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     setState(() {
       expandedNodes.clear();
       hiddenNodes.clear();
-      final nodes = List.from(graph.nodes);
-      for (final node in nodes) {
-        if (node.key?.value != 0) {
-          graph.removeNode(node);
-        }
-      }
+      _initializeRootNode();
     });
     _resetView();
 
-    // Show success feedback
+    // Show success feedback with orange theme
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Row(
-            children: [
-              Icon(LucideIcons.refresh_cw, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Graph reset successfully!'),
-            ],
+          content: const Text(
+            'Graph reset successfully!',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
           ),
-          backgroundColor: const Color(0xFF2E7D32),
+          backgroundColor: const Color(0xFFFF9500),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -681,26 +807,21 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
 
     final parent = nodeParent[nodeId];
     if (parent != null) {
-      final siblings = nodeChildren[parent] ?? [];
-      for (int siblingId in siblings) {
-        if (siblingId != nodeId) {
-          _hideNodeAndDescendants(siblingId);
-        }
+      final parentNodeObj = Node.Id(parent);
+      if (!graph.contains(edge: Edge(parentNodeObj, parentNode))) {
+        graph.addEdge(parentNodeObj, parentNode);
       }
     }
 
     for (int childId in children) {
       final childNode = Node.Id(childId);
-      final nodeInfo = nodeHierarchy[childId];
-      final color = nodeInfo?['color'] ?? Colors.grey;
-      graph.addEdge(
-        parentNode,
-        childNode,
-        paint: Paint()
-          ..color = (color as Color).withValues(alpha: 0.75)
-          ..strokeWidth = 2.0
-          ..style = PaintingStyle.stroke,
-      );
+      if (!graph.contains(node: childNode)) {
+        graph.addNode(childNode);
+      }
+      if (!graph.contains(edge: Edge(parentNode, childNode))) {
+        graph.addEdge(parentNode, childNode);
+      }
+      hiddenNodes.remove(childId);
     }
 
     setState(() {});
@@ -712,16 +833,15 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
 
     final children = nodeChildren[nodeId] ?? [];
     for (int childId in children) {
-      _removeNodeAndDescendants(childId);
+      _hideNodeAndDescendants(childId);
     }
 
     final parent = nodeParent[nodeId];
     if (parent != null) {
-      final siblings = nodeChildren[parent] ?? [];
-      for (int siblingId in siblings) {
-        if (siblingId != nodeId) {
-          _showNodeAndDescendants(siblingId);
-        }
+      final parentNode = Node.Id(parent);
+      final currentNode = Node.Id(nodeId);
+      if (graph.contains(edge: Edge(parentNode, currentNode))) {
+        graph.removeEdge(Edge(parentNode, currentNode));
       }
     }
 
@@ -737,109 +857,43 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
       if (!mounted) return;
 
       final nodeKey = _nodeKeys[nodeId];
-      final viewerContext = _viewerKey.currentContext;
-      final nodeContext = nodeKey?.currentContext;
+      final viewerKey = _viewerKey;
 
-      if (viewerContext == null || nodeContext == null) {
-        // fallback: nudge a bit
+      if (nodeKey?.currentContext == null || viewerKey.currentContext == null) {
         _animateSmallNudge();
         return;
       }
 
-      final viewerBox = viewerContext.findRenderObject() as RenderBox;
-      final nodeBox = nodeContext.findRenderObject() as RenderBox?;
+      try {
+        final nodeBox = nodeKey!.currentContext!.findRenderObject() as RenderBox?;
+        final viewerBox = viewerKey.currentContext!.findRenderObject() as RenderBox?;
 
-      if (nodeBox == null) {
+        if (nodeBox == null || viewerBox == null) {
+          _animateSmallNudge();
+          return;
+        }
+
+        final nodeCenter = nodeBox.localToGlobal(
+          Offset(nodeBox.size.width / 2, nodeBox.size.height / 2),
+        );
+        final viewerCenter = Offset(
+          viewerBox.size.width / 2,
+          viewerBox.size.height / 2,
+        );
+
+        final currentMatrix = Matrix4.fromList(
+          _transformationController.value.storage,
+        );
+        final currentScale = _getScaleFromMatrix(currentMatrix);
+
+        final translation = viewerCenter - nodeCenter;
+        final targetMatrix = Matrix4.identity()
+          ..scale(currentScale)
+          ..translate(translation.dx / currentScale, translation.dy / currentScale);
+
+        _clampAndAnimateToMatrix(targetMatrix);
+      } catch (e) {
         _animateSmallNudge();
-        return;
-      }
-
-      // Node center in global coordinates
-      final nodeTopLeftGlobal = nodeBox.localToGlobal(Offset.zero);
-      final nodeCenterGlobal =
-          nodeTopLeftGlobal +
-          Offset(nodeBox.size.width / 2, nodeBox.size.height / 2);
-
-      // Viewer center in global coordinates
-      final viewerTopLeftGlobal = viewerBox.localToGlobal(Offset.zero);
-      final viewerCenterGlobal =
-          viewerTopLeftGlobal +
-          Offset(viewerBox.size.width / 2, viewerBox.size.height / 2);
-
-      final deltaGlobal = nodeCenterGlobal - viewerCenterGlobal;
-
-      // Current matrix and its inverse
-      final current = Matrix4.fromList(_transformationController.value.storage);
-      final inv = Matrix4.fromList(current.storage);
-      // ignore: unrelated_type_equality_checks
-      final bool invertible = inv.invert() == true;
-
-      if (!invertible) {
-        _animateSmallNudge();
-        return;
-      }
-
-      final v.Vector3 deltaLocalVec = inv.transform3(
-        v.Vector3(deltaGlobal.dx, deltaGlobal.dy, 0),
-      );
-
-      // Compute target scale (optionally adjust to show children)
-      final double currentScale = _getScaleFromMatrix(current);
-      double targetScale = currentScale;
-      // if too zoomed out, slightly zoom in when focusing on a node with children
-      if (expandedNodes.contains(nodeId) && currentScale < 0.85) {
-        targetScale = math.min(0.95, _maxScale);
-      }
-      targetScale = targetScale.clamp(_minScale, _maxScale);
-
-      // Build target matrix: start from current and translate by -deltaLocal
-      final Matrix4 target = Matrix4.fromList(current.storage);
-
-      // If scale needs to change, create composed matrices without using deprecated methods
-      if ((targetScale - currentScale).abs() > 0.001) {
-        // We'll scale about the viewer center: translate -> scale -> translate back
-        final Offset viewerCenterLocal = inv
-            .transform3(
-              v.Vector3(viewerCenterGlobal.dx, viewerCenterGlobal.dy, 0),
-            )
-            .let((v) => Offset(v.x, v.y));
-
-        // Build translation and scale matrices explicitly
-        final Matrix4 toViewerCenter = Matrix4.translationValues(
-          viewerCenterLocal.dx,
-          viewerCenterLocal.dy,
-          0.0,
-        );
-        final Matrix4 scaleMat = Matrix4.diagonal3Values(
-          targetScale,
-          targetScale,
-          1.0,
-        );
-        final Matrix4 fromViewerCenter = Matrix4.translationValues(
-          -viewerCenterLocal.dx,
-          -viewerCenterLocal.dy,
-          0.0,
-        );
-
-        // Compose: T(viewerCenter) * S(scale) * T(-viewerCenter)
-        final Matrix4 composed = Matrix4.identity();
-        composed.multiply(toViewerCenter);
-        composed.multiply(scaleMat);
-        composed.multiply(fromViewerCenter);
-
-        // apply current transform afterwards and then translate by -deltaLocal
-        composed.multiply(target);
-        composed.multiply(
-          Matrix4.translationValues(-deltaLocalVec.x, -deltaLocalVec.y, 0.0),
-        );
-
-        _clampAndAnimateToMatrix(composed);
-      } else {
-        // No scale change - simply translate by -deltaLocalVec (use translation matrix)
-        target.multiply(
-          Matrix4.translationValues(-deltaLocalVec.x, -deltaLocalVec.y, 0.0),
-        );
-        _clampAndAnimateToMatrix(target);
       }
     });
   }
@@ -865,164 +919,127 @@ class _CareerRoadmapGraphState extends State<CareerRoadmapGraph>
     if (!mounted) return;
 
     // Extract scale and clamp it
-    final double scale = _getScaleFromMatrix(
-      targetRaw,
-    ).clamp(_minScale, _maxScale);
+    final double scale = _getScaleFromMatrix(targetRaw).clamp(_minScale, _maxScale);
 
-    // Normalize targetRaw scale to clamped scale while preserving translation proportion
-    final Matrix4 normalized = Matrix4.identity();
-    // We'll compute translation so that normalized * child = desired. Simpler approach:
-    // create a new matrix with clamped scale and copy rotation if any (rotation unlikely).
-    normalized.multiply(Matrix4.diagonal3Values(scale, scale, 1.0));
+    // Extract translation
+    final targetStorage = targetRaw.storage;
+    final tx = targetStorage[12];
+    final ty = targetStorage[13];
 
-    // Try to copy translation components from targetRaw adjusted for scale difference.
-    // Extract translation from targetRaw
-    final tx = targetRaw.storage[12];
-    final ty = targetRaw.storage[13];
+    final Matrix4 clampedMatrix = Matrix4.identity()
+      ..scale(scale)
+      ..translate(tx, ty);
 
-    // When scale changed, translation must be adjusted. We'll set normalized translation to tx,ty
-    normalized.setTranslationRaw(tx, ty, targetRaw.storage[14]);
-
-    // Clamp translation magnitude to avoid runaway values (very large graphs)
-    const double maxTranslate = 20000;
-    final clampedTx = normalized.storage[12].clamp(-maxTranslate, maxTranslate);
-    final clampedTy = normalized.storage[13].clamp(-maxTranslate, maxTranslate);
-    normalized.setTranslationRaw(clampedTx, clampedTy, normalized.storage[14]);
-
-    _animateToMatrix(normalized);
+    _animateToMatrix(clampedMatrix);
   }
 
   void _resetView() {
-    if (mounted) {
-      final targetMatrix = Matrix4.identity();
-      _animateToMatrix(targetMatrix);
+    _animateToMatrix(Matrix4.identity());
+  }
+
+  Matrix4 _lerpMatrix4(Matrix4 a, Matrix4 b, double t) {
+    final result = Matrix4.identity();
+    for (int i = 0; i < 16; i++) {
+      result.storage[i] = a.storage[i] + (b.storage[i] - a.storage[i]) * t;
     }
+    return result;
   }
 
   void _animateToMatrix(Matrix4 targetMatrix) {
-    final currentMatrix = _transformationController.value;
+    if (!mounted) return;
 
-    // Create a Tween for smooth matrix transformation
-    final AnimationController controller = AnimationController(
+    final Matrix4 startMatrix = Matrix4.fromList(
+      _transformationController.value.storage,
+    );
+
+    late AnimationController animController;
+    animController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 
-    final Animation<Matrix4> animation =
-        Matrix4Tween(begin: currentMatrix, end: targetMatrix).animate(
-          CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic),
-        );
+    final animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: animController, curve: Curves.easeOutCubic),
+    );
 
     animation.addListener(() {
-      _transformationController.value = animation.value;
-    });
-
-    animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.dispose();
+      final t = animation.value;
+      final interpolated = _lerpMatrix4(startMatrix, targetMatrix, t);
+      if (mounted) {
+        _transformationController.value = interpolated;
       }
     });
 
-    controller.forward();
+    animController.forward().then((_) => animController.dispose());
   }
 
   void _hideNodeAndDescendants(int nodeId) {
     hiddenNodes.add(nodeId);
+    expandedNodes.remove(nodeId);
+
     final node = Node.Id(nodeId);
     if (graph.contains(node: node)) {
       graph.removeNode(node);
     }
+
     final children = nodeChildren[nodeId] ?? [];
     for (int childId in children) {
       _hideNodeAndDescendants(childId);
     }
   }
 
-  void _showNodeAndDescendants(int nodeId) {
-    hiddenNodes.remove(nodeId);
-    final parent = nodeParent[nodeId];
-    if (parent == null ||
-        (expandedNodes.contains(parent) && !hiddenNodes.contains(parent))) {
-      final parentNode = Node.Id(parent!);
-      final childNode = Node.Id(nodeId);
-      final nodeInfo = nodeHierarchy[nodeId];
-      final color = nodeInfo?['color'] ?? Colors.grey;
-      if (!graph.contains(node: childNode)) {
-        graph.addEdge(
-          parentNode,
-          childNode,
-          paint: Paint()
-            ..color = (color as Color).withValues(alpha: 0.75)
-            ..strokeWidth = 2.0,
-        );
-      }
-    }
-  }
 
-  void _removeNodeAndDescendants(int nodeId) {
-    final node = Node.Id(nodeId);
-    if (graph.contains(node: node)) {
-      graph.removeNode(node);
-    }
-    expandedNodes.remove(nodeId);
-    final children = nodeChildren[nodeId] ?? [];
-    for (int childId in children) {
-      _removeNodeAndDescendants(childId);
-    }
-  }
+
+
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFF8F9FA), Color(0xFFE9ECEF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.1),
+            const Color(0xFFFF9500).withOpacity(0.02),
+            Colors.white.withOpacity(0.05),
+          ],
         ),
       ),
-      child: ClipRect(
-        child: InteractiveViewer(
-          key: _viewerKey,
-          transformationController: _transformationController,
-          boundaryMargin: const EdgeInsets.all(1000),
-          minScale: _minScale,
-          maxScale: _maxScale,
-          constrained: false,
-          child: GraphView(
-            graph: graph,
-            algorithm: BuchheimWalkerAlgorithm(
-              builder,
-              TreeEdgeRenderer(builder),
-            ),
-            paint: Paint()
-              ..color = Colors.grey.shade400
-              ..strokeWidth = 2.0
-              ..style = PaintingStyle.stroke,
-            builder: (Node node) {
-              final nodeId = (node.key?.value as int?) ?? 0;
-              return rectangleWidget(nodeId);
-            },
-          ),
+      child: InteractiveViewer(
+        key: _viewerKey,
+        transformationController: _transformationController,
+        minScale: _minScale,
+        maxScale: _maxScale,
+        boundaryMargin: const EdgeInsets.all(100),
+        child: GraphView(
+          graph: graph,
+          algorithm: BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
+          paint: Paint()
+            ..color = const Color(0xFFFF9500).withOpacity(0.6)
+            ..strokeWidth = 3
+            ..style = PaintingStyle.stroke,
+          builder: (Node node) {
+            final nodeId = node.key!.value as int;
+            return rectangleWidget(nodeId);
+          },
         ),
       ),
     );
   }
 }
 
-class NodeStyle {
-  final Color backgroundColor;
-  final Color textColor;
+class ModernNodeStyle {
+  final Color primaryColor;
+  final Gradient gradient;
   final IconData icon;
 
-  NodeStyle({
-    required this.backgroundColor,
-    required this.textColor,
+  ModernNodeStyle({
+    required this.primaryColor,
+    required this.gradient,
     required this.icon,
   });
 }
 
-// tiny helper to use returned Vector3 from transform3 inline
-extension _Let<T> on T {
-  R let<R>(R Function(T) fn) => fn(this);
-}

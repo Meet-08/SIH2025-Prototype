@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +21,15 @@ class AptitudeScreen extends ConsumerStatefulWidget {
 class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
   int currentQuestionIndex = 0;
   Map<int, int> answers = {};
+
+  // Aptitude feature brand colors (match FeatureCard on Home)
+  static const Color _accentStart = Color(0xFF00CEC9);
+  static const Color _accentEnd = Color(0xFF4ADEAA);
+  static const LinearGradient _aptitudeGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [_accentStart, _accentEnd],
+  );
 
   void _moveNextOrFinish() async {
     if (currentQuestionIndex + 1 < aptitudeQuestions.length) {
@@ -63,7 +74,8 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
         flexibleSpace: Container(
           width: double.infinity,
           decoration: const BoxDecoration(
-            gradient: AppGradients.primaryGradient,
+            // Use the aptitude card gradient instead of primary
+            gradient: _aptitudeGradient,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
@@ -89,14 +101,17 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        // Soft airy background similar to home, tinted towards aptitude teal
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              AppColors.primary.withValues(alpha: 0.05),
+              Color(0xFFE0F7FA), // light cyan
+              Color(0xFFE8FFF8), // soft mint
               AppColors.background,
             ],
+            stops: [0.0, 0.5, 1.0],
           ),
         ),
         child: SafeArea(
@@ -113,28 +128,68 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
 
                 const SizedBox(height: 24),
 
+                // Question Card wrapped in glassmorphism container to match home
                 Expanded(
-                  child: QuestionCardWidget(
-                    question: question,
-                    currentQuestionIndex: currentQuestionIndex,
-                    child: question.type == QuestionType.multipleChoice
-                        ? MultipleChoiceOptionsWidget(
-                            question: question,
-                            onOptionSelected: (index) {
-                              setState(() {
-                                answers[currentQuestionIndex] = index;
-                                _moveNextOrFinish();
-                              });
-                            },
-                          )
-                        : RatingQuestionWidget(
-                            selectedRating: answers[currentQuestionIndex] ?? 0,
-                            onRatingSelected: (rating) {
-                              setState(() {
-                                answers[currentQuestionIndex] = rating;
-                              });
-                            },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: BackdropFilter(
+                      filter: ui.ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.18),
+                              Colors.white.withValues(alpha: 0.08),
+                            ],
                           ),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.35),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 18,
+                              offset: const Offset(0, 6),
+                            ),
+                            BoxShadow(
+                              color: _accentStart.withValues(alpha: 0.12),
+                              blurRadius: 28,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: QuestionCardWidget(
+                          question: question,
+                          currentQuestionIndex: currentQuestionIndex,
+                          accentColor: _accentStart,
+                          accentGradient: _aptitudeGradient,
+                          child: question.type == QuestionType.multipleChoice
+                              ? MultipleChoiceOptionsWidget(
+                                  question: question,
+                                  onOptionSelected: (index) {
+                                    setState(() {
+                                      answers[currentQuestionIndex] = index;
+                                      _moveNextOrFinish();
+                                    });
+                                  },
+                                )
+                              : RatingQuestionWidget(
+                                  selectedRating:
+                                      answers[currentQuestionIndex] ?? 0,
+                                  onRatingSelected: (rating) {
+                                    setState(() {
+                                      answers[currentQuestionIndex] = rating;
+                                    });
+                                  },
+                                ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
 
@@ -156,120 +211,165 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
     int answeredCount,
     int totalQuestions,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  LucideIcons.target,
-                  color: AppColors.primary,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                "Progress Tracker",
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "$answeredCount of $totalQuestions completed",
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              Text(
-                "${(progressValue * 100).toInt()}%",
-                style: context.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.secondary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: progressValue,
-              minHeight: 8,
-              backgroundColor: AppColors.surfaceVariant,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                AppColors.secondary,
-              ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.18),
+                Colors.white.withValues(alpha: 0.06),
+              ],
             ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.35),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 18,
+                offset: const Offset(0, 6),
+              ),
+              BoxShadow(
+                color: _accentEnd.withValues(alpha: 0.12),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
-        ],
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        width: 1,
+                      ),
+                    ),
+                    child: const Icon(
+                      LucideIcons.target,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    "Progress Tracker",
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF0F172A),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "$answeredCount of $totalQuestions completed",
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    "${(progressValue * 100).toInt()}%",
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: _accentStart,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: progressValue,
+                  minHeight: 8,
+                  backgroundColor: AppColors.surfaceVariant,
+                  valueColor: const AlwaysStoppedAnimation<Color>(_accentEnd),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildNavigationButton() {
     final selectedRating = answers[currentQuestionIndex] ?? 0;
+    final bool enabled = selectedRating > 0;
 
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: selectedRating > 0
-            ? () {
-                _moveNextOrFinish();
-              }
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: selectedRating > 0
-              ? AppColors.primary
-              : AppColors.textTertiary,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: selectedRating > 0 ? 4 : 0,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              currentQuestionIndex + 1 < aptitudeQuestions.length
-                  ? "Next Question"
-                  : "Finish Assessment",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(width: 8),
-            Icon(
-              currentQuestionIndex + 1 < aptitudeQuestions.length
-                  ? LucideIcons.arrow_right
-                  : LucideIcons.check,
-              size: 20,
-            ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: enabled
+              ? _aptitudeGradient
+              : const LinearGradient(
+                  colors: [AppColors.textTertiary, AppColors.textTertiary],
+                ),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            if (enabled)
+              BoxShadow(
+                color: _accentStart.withValues(alpha: 0.25),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
           ],
+        ),
+        child: ElevatedButton(
+          onPressed: enabled
+              ? () {
+                  _moveNextOrFinish();
+                }
+              : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                currentQuestionIndex + 1 < aptitudeQuestions.length
+                    ? "Next Question"
+                    : "Finish Assessment",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                currentQuestionIndex + 1 < aptitudeQuestions.length
+                    ? LucideIcons.arrow_right
+                    : LucideIcons.check,
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
