@@ -98,7 +98,7 @@ class _CourseToCareerMappingScreenState
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFF9500).withOpacity(0.3),
+                color: const Color(0xFFFF9500).withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -110,7 +110,7 @@ class _CourseToCareerMappingScreenState
             GFIconButton(
               onPressed: () => context.pop(),
               icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: GFIconButtonShape.circle,
               size: GFSize.MEDIUM,
             ),
@@ -160,29 +160,30 @@ class _CourseToCareerMappingScreenState
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  // Modern glassmorphism selection card
                   Container(
                     width: double.infinity,
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFF9500).withOpacity(0.15),
+                          color: const Color(
+                            0xFFFF9500,
+                          ).withValues(alpha: 0.15),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           blurRadius: 15,
                           offset: const Offset(-8, -8),
                         ),
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 15,
                           offset: const Offset(8, 8),
                         ),
@@ -198,9 +199,9 @@ class _CourseToCareerMappingScreenState
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                const Color(0xFFFF9500).withOpacity(0.15),
-                                const Color(0xFFFF6B35).withOpacity(0.1),
-                                Colors.white.withOpacity(0.8),
+                                const Color(0xFFFF9500).withValues(alpha: 0.15),
+                                const Color(0xFFFF6B35).withValues(alpha: 0.1),
+                                Colors.white.withValues(alpha: 0.8),
                               ],
                               stops: const [0.0, 0.5, 1.0],
                             ),
@@ -226,7 +227,7 @@ class _CourseToCareerMappingScreenState
                                           BoxShadow(
                                             color: const Color(
                                               0xFFFF9500,
-                                            ).withOpacity(0.3),
+                                            ).withValues(alpha: 0.3),
                                             blurRadius: 8,
                                             offset: const Offset(0, 4),
                                           ),
@@ -255,17 +256,19 @@ class _CourseToCareerMappingScreenState
                                     horizontal: 16,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
                                       color: const Color(
                                         0xFFFF9500,
-                                      ).withOpacity(0.3),
+                                      ).withValues(alpha: 0.3),
                                       width: 1,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.05,
+                                        ),
                                         blurRadius: 8,
                                         offset: const Offset(0, 2),
                                       ),
@@ -308,22 +311,24 @@ class _CourseToCareerMappingScreenState
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF9500).withOpacity(0.1),
+                            color: const Color(
+                              0xFFFF9500,
+                            ).withValues(alpha: 0.1),
                             blurRadius: 25,
                             offset: const Offset(0, 10),
                           ),
                           BoxShadow(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             blurRadius: 20,
                             offset: const Offset(-10, -10),
                           ),
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
+                            color: Colors.black.withValues(alpha: 0.08),
                             blurRadius: 20,
                             offset: const Offset(10, 10),
                           ),
@@ -339,9 +344,11 @@ class _CourseToCareerMappingScreenState
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  Colors.white.withOpacity(0.9),
-                                  Colors.white.withOpacity(0.7),
-                                  const Color(0xFFFF9500).withOpacity(0.05),
+                                  Colors.white.withValues(alpha: 0.9),
+                                  Colors.white.withValues(alpha: 0.7),
+                                  const Color(
+                                    0xFFFF9500,
+                                  ).withValues(alpha: 0.05),
                                 ],
                               ),
                             ),
@@ -396,7 +403,7 @@ class _CourseToCareerMappingScreenState
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF9500).withOpacity(0.4),
+                  color: const Color(0xFFFF9500).withValues(alpha: 0.4),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -433,7 +440,7 @@ class _CourseToCareerMappingScreenState
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF9500).withOpacity(0.4),
+                  color: const Color(0xFFFF9500).withValues(alpha: 0.4),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -477,7 +484,7 @@ class _CourseToCareerMappingScreenState
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF9500).withOpacity(0.3),
+                  color: const Color(0xFFFF9500).withValues(alpha: 0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 5),
                 ),
@@ -517,12 +524,15 @@ class _CourseToCareerMappingScreenState
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.red.withOpacity(0.1),
-                  Colors.red.withOpacity(0.05),
+                  Colors.red.withValues(alpha: 0.1),
+                  Colors.red.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.red.withOpacity(0.3), width: 1),
+              border: Border.all(
+                color: Colors.red.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Icon(
               LucideIcons.triangle_alert,
@@ -573,18 +583,18 @@ class _CourseToCareerMappingScreenState
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.white.withOpacity(0.95),
-                      Colors.white.withOpacity(0.85),
-                      const Color(0xFFFF9500).withOpacity(0.1),
+                      Colors.white.withValues(alpha: 0.95),
+                      Colors.white.withValues(alpha: 0.85),
+                      const Color(0xFFFF9500).withValues(alpha: 0.1),
                     ],
                   ),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFF9500).withOpacity(0.2),
+                      color: const Color(0xFFFF9500).withValues(alpha: 0.2),
                       blurRadius: 25,
                       offset: const Offset(0, 10),
                     ),
@@ -681,16 +691,19 @@ class _CourseToCareerMappingScreenState
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [const Color(0xFFFF9500).withOpacity(0.08), Colors.white],
+          colors: [
+            const Color(0xFFFF9500).withValues(alpha: 0.08),
+            Colors.white,
+          ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFFF9500).withOpacity(0.15),
+          color: const Color(0xFFFF9500).withValues(alpha: 0.15),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF9500).withOpacity(0.1),
+            color: const Color(0xFFFF9500).withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -708,7 +721,7 @@ class _CourseToCareerMappingScreenState
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF9500).withOpacity(0.3),
+                  color: const Color(0xFFFF9500).withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
