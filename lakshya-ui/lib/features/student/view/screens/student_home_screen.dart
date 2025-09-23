@@ -1,10 +1,10 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:lakshya/core/core.dart';
 import 'package:lakshya/core/provider/current_user_notifier.dart';
-import 'package:lakshya/core/utils/show_snackbar.dart';
 import 'package:lakshya/features/student/view/widgets/feature_card.dart';
 
 class StudentHomeScreen extends ConsumerStatefulWidget {
@@ -21,123 +21,17 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppGradients.primaryGradient,
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-          ),
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              onTap: () => context.pushNamed('/student-dashboard'),
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    width: 2,
-                  ),
-                ),
-                child: CircleAvatar(
-                  radius: 22,
-                  backgroundImage: currentUser?.profilePictureUrl != null
-                      ? NetworkImage(currentUser!.profilePictureUrl!)
-                      : const AssetImage(
-                              'assets/images/Default_Profile_Picture.png',
-                            )
-                            as ImageProvider,
-                ),
-              ),
-            ),
-            GFIconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    title: const Row(
-                      children: [
-                        Icon(
-                          LucideIcons.log_out,
-                          color: AppColors.primary,
-                          size: 24,
-                        ),
-                        SizedBox(width: 12),
-                        Text('Confirm Logout'),
-                      ],
-                    ),
-                    content: const Text(
-                      'Are you sure you want to log out?',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => context.pop(),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(color: AppColors.textSecondary),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.pop();
-                          ref.read(currentUserProvider.notifier).logout();
-                          if (mounted) {
-                            context.pushNamedAndRemoveUntil(
-                              '/student-login',
-                              (route) => false,
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text('Logout'),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              icon: const Icon(
-                LucideIcons.log_out,
-                color: Colors.white,
-                size: 24,
-              ),
-              color: Colors.white.withValues(alpha: 0.2),
-              shape: GFIconButtonShape.circle,
-              size: GFSize.MEDIUM,
-            ),
-          ],
-        ),
-      ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              AppColors.primary.withValues(alpha: 0.05),
-              AppColors.background,
-              AppColors.background,
+              Color(0xFFE0F7FA), // Light cyan
+              Color(0xFFB2EBF2), // Medium cyan
+              Color(0xFF80DEEA), // Slightly deeper cyan
             ],
-            stops: const [0.0, 0.3, 1.0],
+            stops: [0.0, 0.5, 1.0],
           ),
         ),
         child: SafeArea(
@@ -146,84 +40,130 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Section with Welcome Message
+                // Header Section with Welcome Message (Capsule style)
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white,
-                        Colors.white.withValues(alpha: 0.8),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        blurRadius: 20,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 5),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(40), // pill shape
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 14,
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                      decoration: const BoxDecoration(
+                        gradient: AppGradients.brandHeaderGradient,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          // Multi-ring avatar (outer cyan→purple, inner orange→pink)
                           Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              gradient: AppGradients.primaryGradient,
-                              borderRadius: BorderRadius.circular(12),
+                            width: 58,
+                            height: 58,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFF22D3EE), Color(0xFF8B5CF6)],
+                              ),
                             ),
-                            child: const Icon(
-                              LucideIcons.sparkles,
-                              color: Colors.white,
-                              size: 24,
+                            padding: const EdgeInsets.all(3),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFFFB703),
+                                    Color(0xFFFB5607),
+                                  ],
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(3),
+                              child: CircleAvatar(
+                                radius: 24,
+                                backgroundImage:
+                                    currentUser?.profilePictureUrl != null
+                                    ? NetworkImage(
+                                        currentUser!.profilePictureUrl!,
+                                      )
+                                    : const AssetImage(
+                                            'assets/images/Default_Profile_Picture.png',
+                                          )
+                                          as ImageProvider,
+                                backgroundColor: const ui.Color.fromARGB(
+                                  255,
+                                  154,
+                                  189,
+                                  195,
+                                ),
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          const SizedBox(width: 14),
+                          // Texts
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text(
-                                  'Welcome back!',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: AppColors.textSecondary,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      LucideIcons.sparkles,
+                                      color: Color(0xFFFACC15), // yellow accent
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Welcome back!',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  currentUser?.name ?? 'Student',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    color: AppColors.textPrimary,
-                                    fontWeight: FontWeight.bold,
+                                  "${currentUser!.name.split(" ")[0]} ${currentUser.name.split(" ").length > 1 ? currentUser.name.split(" ")[1] : ''}",
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.95),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          // Right circular outline button
+                          Container(
+                            width: 46,
+                            height: 46,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.10),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.75),
+                                width: 1.6,
+                              ),
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                LucideIcons.arrow_right,
+                                color: Colors.white,
+                                size: 22,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Ready to explore your career journey? Let\'s discover what\'s waiting for you!',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: AppColors.textSecondary,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
 
@@ -236,20 +176,26 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                       Row(
                         children: [
                           Container(
-                            width: 4,
-                            height: 24,
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              gradient: AppGradients.primaryGradient,
-                              borderRadius: BorderRadius.circular(2),
+                              color: const Color(
+                                0xFF8B5CF6,
+                              ).withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              LucideIcons.grid_3x3,
+                              color: Color(0xFF8B5CF6),
+                              size: 20,
                             ),
                           ),
                           const SizedBox(width: 12),
                           const Text(
                             'Explore Features',
                             style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF0F172A),
                             ),
                           ),
                         ],
@@ -261,44 +207,85 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                         crossAxisCount: 2,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 0.85,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.6,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         children: [
                           FeatureCard(
-                            title: "Aptitude Quiz",
+                            title: "Aptitude\n Quiz",
                             description:
-                                "Discover your strengths and interests.",
+                                "Find career paths matched to your strengths",
                             icon: LucideIcons.brain,
+                            accentGradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF00CEC9), Color(0xFF4ADEAA)],
+                            ),
+                            accentColor: const Color(0xFF00CEC9),
                             onTap: () => context.pushNamed("/aptitude-quiz"),
                           ),
                           FeatureCard(
-                            title: "Explore Career",
+                            title: "Career Roadmap",
                             description:
-                                "Find the best career options tailored to your profile.",
-                            icon: LucideIcons.compass,
+                                "Step-by-step guidance to your dream career",
+                            icon: LucideIcons.map,
+                            accentGradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFFF9500), Color(0xFFFF6B35)],
+                            ),
+                            accentColor: const ui.Color.fromARGB(
+                              255,
+                              255,
+                              157,
+                              21,
+                            ),
                             onTap: () =>
                                 context.pushNamed("/course-to-career-mapping"),
                           ),
                           FeatureCard(
-                            title: "Colleges",
+                            title: "Nearby Colleges",
                             description:
-                                "Explore top colleges and universities that match your goals.",
+                                "Discover colleges tailored to your goals",
                             icon: LucideIcons.graduation_cap,
+                            accentGradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFE91E63), Color(0xFFFF6B9D)],
+                            ),
+                            accentColor: const ui.Color.fromARGB(
+                              255,
+                              230,
+                              99,
+                              143,
+                            ),
                             onTap: () => context.pushNamed("/colleges"),
                           ),
                           FeatureCard(
-                            title: "Scholarships",
+                            title: "Find Scholarships",
                             description:
-                                "Find scholarships and financial aid that suit your profile.",
-                            icon: LucideIcons.gift,
+                                "Find financial aid to support your studies",
+                            icon: LucideIcons.award,
+                            accentGradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF8B5CF6), Color(0xFFBB6BD9)],
+                            ),
+                            accentColor: const Color(0xFF8B5CF6),
                             onTap: () => context.pushNamed("/scholarship"),
                           ),
                           FeatureCard(
                             title: "Timeline",
                             description:
-                                "Keep track of important deadlines and milestones.",
-                            icon: LucideIcons.calendar_check,
+                                "Get personalized reminders for important deadlines",
+                            icon: LucideIcons.calendar,
+                            accentGradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF60A5FA), Color(0xFF22D3EE)],
+                            ),
+                            accentColor: const Color(0xFF60A5FA),
                             onTap: () => context.pushNamed("/timeline"),
                           ),
                           FeatureCard(
@@ -306,11 +293,24 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen> {
                             description:
                                 "Access study materials and career guidance resources.",
                             icon: LucideIcons.book_open,
+                            accentGradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                ui.Color.fromARGB(255, 255, 209, 140),
+                                ui.Color.fromARGB(255, 255, 211, 146),
+                              ],
+                            ),
+                            accentColor: const Color(0xFFFFA726),
                             onTap: () {
-                              print('Resources Tapped');
-                              showSnackbar(
-                                context,
-                                'These features are coming soon!',
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Resources feature is coming soon',
+                                  ),
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: Duration(seconds: 2),
+                                ),
                               );
                             },
                           ),

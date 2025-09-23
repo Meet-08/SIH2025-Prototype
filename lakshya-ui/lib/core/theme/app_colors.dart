@@ -138,6 +138,44 @@ class AppColors {
   static const Color languageEnglish = Color(0xFF1976D2);
   static const Color languageHindi = Color(0xFFFF6F00);
   static const Color languageRegional = Color(0xFF388E3C);
+
+  // --- Standardized palette keys (mobile-first) ---
+  // These map 1:1 to the JSON keys in the UI spec for consistency across UI code.
+  static const Color colorPrimary500 = Color(
+    0xFF3B82F6,
+  ); // JSON: colorPrimary500
+  static const Color colorPrimaryAccentStart = Color(
+    0xFF3B82F6,
+  ); // JSON: colorPrimaryAccentStart
+  static const Color colorPrimaryAccentEnd = Color(
+    0xFF6D28D9,
+  ); // JSON: colorPrimaryAccentEnd
+  static const Color colorSecondary500 = Color(
+    0xFF06B6D4,
+  ); // JSON: colorSecondary500
+  static const Color colorAccent500 = Color(0xFFF97316); // JSON: colorAccent500
+  static const Color colorSuccess500 = Color(
+    0xFF10B981,
+  ); // JSON: colorSuccess500
+  static const Color colorWarning500 = Color(
+    0xFFF59E0B,
+  ); // JSON: colorWarning500
+  static const Color colorDanger500 = Color(0xFFEF4444); // JSON: colorDanger500
+  static const Color colorBg = Color(0xFFF8FAFC); // JSON: colorBg
+  static const Color colorSurface = Color(0xFFFFFFFF); // JSON: colorSurface
+  static const Color colorMuted = Color(0xFF6B7280); // JSON: colorMuted
+  static const Color colorText = Color(0xFF0F172A); // JSON: colorText
+
+  // Accent palette for varied, multi-color UI accents
+  static const List<Color> brandAccents = <Color>[
+    colorPrimary500,
+    colorSecondary500,
+    colorAccent500,
+    colorSuccess500,
+    colorWarning500,
+    colorDanger500,
+    colorPrimaryAccentEnd, // purple
+  ];
 }
 
 /// Gradient definitions for the app
@@ -146,6 +184,16 @@ class AppGradients {
 
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [AppColors.primary, AppColors.primaryDark],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  // Multi-accent brand header gradient (blue → purple)
+  static const LinearGradient brandHeaderGradient = LinearGradient(
+    colors: [
+      Color.fromARGB(255, 18, 79, 177),
+      Color.fromARGB(220, 148, 87, 247),
+    ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -166,6 +214,16 @@ class AppGradients {
     colors: [AppColors.background, AppColors.surfaceVariant],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
+  );
+
+  // Subtle surface tint for cards/sections
+  static const LinearGradient surfaceAccent = LinearGradient(
+    colors: [
+      AppColors.colorSurface,
+      Color(0x0F3B82F6), // primary500 @ 6% approx
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
   );
 
   // Feature-specific gradients
