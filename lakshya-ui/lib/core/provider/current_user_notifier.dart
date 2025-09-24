@@ -1,3 +1,4 @@
+import 'package:lakshya/core/utils/token_storage.dart';
 import 'package:lakshya/features/auth/model/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -14,8 +15,8 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
     state = user;
   }
 
-  void logout() {
-    // TODO: Clear any stored tokens or session data if necessary
+  void logout() async {
+    await TokenStorage.deleteToken();
     state = null;
   }
 }

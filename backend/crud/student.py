@@ -2,19 +2,16 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 import models.student as model_student
-from schema.student import StudentCreate, StudentOut
+from schema.student import StudentCreate
 from utils.hashing import hash_password
 
 
 def get_student_by_email(db: Session, email: str):
-    db_student = (
+    return (
         db.query(model_student.Student)
         .filter(model_student.Student.email == email)
         .first()
     )
-    if not db_student:
-        raise HTTPException(status_code=404, detail="Student not found")
-    return StudentOut.model_validate(db_student)
 
 
 def create_student(db: Session, student: StudentCreate):
@@ -30,7 +27,7 @@ def create_student(db: Session, student: StudentCreate):
         db.add(db_student)
         db.commit()
         db.refresh(db_student)
-        return StudentOut.model_validate(db_student)
+        return db_student
     except Exception as e:
         db.rollback()
         print(f"Error creating student: {e}")
