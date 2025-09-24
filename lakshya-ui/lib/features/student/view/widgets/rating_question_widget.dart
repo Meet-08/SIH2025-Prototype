@@ -14,22 +14,25 @@ class RatingQuestionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+
     return Column(
       children: [
         // Rating Description
         _buildRatingDescription(context),
 
-        const SizedBox(height: 32),
+        SizedBox(height: isSmallScreen ? 20 : 32),
 
         // Rating Scale
         _buildRatingScale(context),
 
-        const SizedBox(height: 24),
+        SizedBox(height: isSmallScreen ? 16 : 24),
 
         // Rating Labels
         _buildRatingLabels(context),
 
-        const SizedBox(height: 32),
+        SizedBox(height: isSmallScreen ? 20 : 32),
       ],
     );
   }
@@ -60,6 +63,13 @@ class RatingQuestionWidget extends StatelessWidget {
   }
 
   Widget _buildRatingScale(BuildContext context) {
+    // Make rating buttons responsive based on screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    final buttonSize = isSmallScreen ? 48.0 : 60.0;
+    final iconSize = isSmallScreen ? 20.0 : 24.0;
+    final fontSize = isSmallScreen ? 10.0 : 12.0;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(5, (index) {
@@ -67,50 +77,62 @@ class RatingQuestionWidget extends StatelessWidget {
         final isSelected =
             rating <= selectedRating; // Fill stars up to selected rating
 
-        return GestureDetector(
-          onTap: () => onRatingSelected(rating),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: isSelected ? AppColors.accent : AppColors.surfaceVariant,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: isSelected ? AppColors.accent : AppColors.outlineVariant,
-                width: 2,
-              ),
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: AppColors.accent.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : null,
+        return Flexible(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: isSmallScreen ? 2.0 : 4.0,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  isSelected ? LucideIcons.star : LucideIcons.star,
+            child: GestureDetector(
+              onTap: () => onRatingSelected(rating),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: buttonSize,
+                height: buttonSize,
+                decoration: BoxDecoration(
                   color: isSelected
-                      ? AppColors.onAccent
-                      : AppColors.textSecondary,
-                  size: 24,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  rating.toString(),
-                  style: context.textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+                      ? AppColors.accent
+                      : AppColors.surfaceVariant,
+                  borderRadius: BorderRadius.circular(buttonSize / 2),
+                  border: Border.all(
                     color: isSelected
-                        ? AppColors.onAccent
-                        : AppColors.textSecondary,
+                        ? AppColors.accent
+                        : AppColors.outlineVariant,
+                    width: 2,
                   ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppColors.accent.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
                 ),
-              ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isSelected ? LucideIcons.star : LucideIcons.star,
+                      color: isSelected
+                          ? AppColors.onAccent
+                          : AppColors.textSecondary,
+                      size: iconSize,
+                    ),
+                    SizedBox(height: isSmallScreen ? 1 : 2),
+                    Text(
+                      rating.toString(),
+                      style: context.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: fontSize,
+                        color: isSelected
+                            ? AppColors.onAccent
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         );
@@ -119,8 +141,12 @@ class RatingQuestionWidget extends StatelessWidget {
   }
 
   Widget _buildRatingLabels(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    final fontSize = isSmallScreen ? 10.0 : 12.0;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 8 : 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -128,18 +154,21 @@ class RatingQuestionWidget extends StatelessWidget {
             "Disagree",
             style: context.textTheme.bodySmall?.copyWith(
               color: AppColors.textSecondary,
+              fontSize: fontSize,
             ),
           ),
           Text(
             "Neutral",
             style: context.textTheme.bodySmall?.copyWith(
               color: AppColors.textSecondary,
+              fontSize: fontSize,
             ),
           ),
           Text(
             "Agree",
             style: context.textTheme.bodySmall?.copyWith(
               color: AppColors.textSecondary,
+              fontSize: fontSize,
             ),
           ),
         ],

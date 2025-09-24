@@ -16,94 +16,97 @@ class MultipleChoiceOptionsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final opts = question.options ?? const <String>[];
-    return ListView.separated(
-      itemCount: opts.length,
+    return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.zero,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
-      itemBuilder: (context, i) {
-        final option = opts[i];
-        return SizedBox(
-          width: double.infinity,
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => onOptionSelected(i),
-              borderRadius: BorderRadius.circular(12),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
+      child: Column(
+        children: opts.asMap().entries.map((entry) {
+          final int i = entry.key;
+          final String option = entry.value;
+          return Padding(
+            padding: EdgeInsets.only(bottom: i < opts.length - 1 ? 6.0 : 0.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => onOptionSelected(i),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _getOptionColor(i).withValues(alpha: 0.3),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _getOptionColor(i).withValues(alpha: 0.08),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
                     ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    // Option indicator - more compact
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: _getOptionColor(i).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: _getOptionColor(i),
-                          width: 1.5,
-                        ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _getOptionColor(i).withValues(alpha: 0.3),
+                        width: 1.5,
                       ),
-                      child: Center(
-                        child: Text(
-                          String.fromCharCode(65 + i), // A, B, C, D
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: _getOptionColor(i),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _getOptionColor(i).withValues(alpha: 0.08),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // Option indicator - more compact
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: _getOptionColor(i).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: _getOptionColor(i),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              String.fromCharCode(65 + i), // A, B, C, D
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: _getOptionColor(i),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Option text - more compact
-                    Expanded(
-                      child: Text(
-                        option,
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
-                          height: 1.3,
+                        const SizedBox(width: 12),
+                        // Option text - more compact
+                        Expanded(
+                          child: Text(
+                            option,
+                            style: context.textTheme.bodyMedium?.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textPrimary,
+                              height: 1.3,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                        // Arrow icon - smaller
+                        Icon(
+                          LucideIcons.chevron_right,
+                          color: _getOptionColor(i),
+                          size: 16,
+                        ),
+                      ],
                     ),
-                    // Arrow icon - smaller
-                    Icon(
-                      LucideIcons.chevron_right,
-                      color: _getOptionColor(i),
-                      size: 16,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        }).toList(),
+      ),
     );
   }
 

@@ -16,6 +16,7 @@ class FeatureCard extends StatefulWidget {
   final FeatureCardSize size;
   final Color? accentColor;
   final Gradient? accentGradient;
+  final String? imagePath;
 
   const FeatureCard({
     super.key,
@@ -26,6 +27,7 @@ class FeatureCard extends StatefulWidget {
     this.size = FeatureCardSize.medium,
     this.accentColor,
     this.accentGradient,
+    this.imagePath,
   });
 
   @override
@@ -332,14 +334,14 @@ class _FeatureCardState extends State<FeatureCard>
                                 children: [
                                   // Top centered icon badge with enhanced styling
                                   Container(
-                                    width: iconSize + 12,
-                                    height: iconSize + 12,
+                                    width: (iconSize * 2) + 5,
+                                    height: (iconSize * 2) + 5,
                                     decoration: BoxDecoration(
                                       color: Colors.white.withValues(
                                         alpha: 0.25,
                                       ),
                                       borderRadius: BorderRadius.circular(
-                                        (iconSize + 12) / 2,
+                                        ((iconSize * 2) + 20) / 2,
                                       ),
                                       border: Border.all(
                                         color: Colors.white.withValues(
@@ -357,11 +359,32 @@ class _FeatureCardState extends State<FeatureCard>
                                         ),
                                       ],
                                     ),
-                                    child: Icon(
-                                      widget.icon,
-                                      size: iconSize,
-                                      color: Colors.white,
-                                    ),
+                                    child: widget.imagePath != null
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              isDesktop ? 24 : 20,
+                                            ),
+                                            child: Image.asset(
+                                              widget.imagePath!,
+                                              width: iconSize * 2,
+                                              height: iconSize * 2,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                    // Fallback to icon if image fails to load
+                                                    return Icon(
+                                                      widget.icon,
+                                                      size: iconSize,
+                                                      color: Colors.white,
+                                                    );
+                                                  },
+                                            ),
+                                          )
+                                        : Icon(
+                                            widget.icon,
+                                            size: iconSize,
+                                            color: Colors.white,
+                                          ),
                                   ),
 
                                   SizedBox(height: isDesktop ? 16 : 14),

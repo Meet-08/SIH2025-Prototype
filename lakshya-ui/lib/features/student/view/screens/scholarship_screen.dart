@@ -145,7 +145,10 @@ class _ScholarshipScreenState extends ConsumerState<ScholarshipScreen>
               onPressed: () {
                 // Add filter/search functionality here
               },
-              icon: const Icon(LucideIcons.search, color: Colors.white),
+              icon: const Icon(
+                LucideIcons.sliders_horizontal,
+                color: Colors.white,
+              ),
               color: Colors.white.withValues(alpha: 0.2),
               shape: GFIconButtonShape.circle,
               size: GFSize.MEDIUM,

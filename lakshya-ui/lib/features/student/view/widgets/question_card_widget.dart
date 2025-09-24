@@ -23,7 +23,7 @@ class QuestionCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color accent = accentColor ?? AppColors.primary;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -40,11 +40,11 @@ class QuestionCardWidget extends StatelessWidget {
         children: [
           _buildQuestionHeader(context),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           _buildQuestionText(context),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           Expanded(child: child),
         ],
@@ -118,7 +118,7 @@ class QuestionCardWidget extends StatelessWidget {
     final Color accent = accentColor ?? AppColors.primary;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant,
         borderRadius: BorderRadius.circular(10),

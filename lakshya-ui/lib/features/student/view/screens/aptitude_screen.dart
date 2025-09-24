@@ -115,91 +115,103 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // Progress Section
-                _buildProgressSection(
-                  progressValue,
-                  answeredCount,
-                  totalQuestions,
-                ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isSmallScreen = constraints.maxWidth < 360;
+              final padding = isSmallScreen ? 12.0 : 20.0;
 
-                const SizedBox(height: 24),
+              return Padding(
+                padding: EdgeInsets.all(padding),
+                child: Column(
+                  children: [
+                    // Progress Section
+                    _buildProgressSection(
+                      progressValue,
+                      answeredCount,
+                      totalQuestions,
+                    ),
 
-                // Question Card wrapped in glassmorphism container to match home
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: BackdropFilter(
-                      filter: ui.ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.white.withValues(alpha: 0.18),
-                              Colors.white.withValues(alpha: 0.08),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.35),
-                            width: 1.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 18,
-                              offset: const Offset(0, 6),
-                            ),
-                            BoxShadow(
-                              color: _accentStart.withValues(alpha: 0.12),
-                              blurRadius: 28,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: QuestionCardWidget(
-                          question: question,
-                          currentQuestionIndex: currentQuestionIndex,
-                          accentColor: _accentStart,
-                          accentGradient: _aptitudeGradient,
-                          child: question.type == QuestionType.multipleChoice
-                              ? MultipleChoiceOptionsWidget(
-                                  question: question,
-                                  onOptionSelected: (index) {
-                                    setState(() {
-                                      answers[currentQuestionIndex] = index;
-                                      _moveNextOrFinish();
-                                    });
-                                  },
-                                )
-                              : RatingQuestionWidget(
-                                  selectedRating:
-                                      answers[currentQuestionIndex] ?? 0,
-                                  onRatingSelected: (rating) {
-                                    setState(() {
-                                      answers[currentQuestionIndex] = rating;
-                                    });
-                                  },
+                    const SizedBox(height: 16),
+
+                    // Question Card wrapped in glassmorphism container to match home
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: BackdropFilter(
+                          filter: ui.ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.white.withValues(alpha: 0.18),
+                                  Colors.white.withValues(alpha: 0.08),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.35),
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.08),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 6),
                                 ),
+                                BoxShadow(
+                                  color: _accentStart.withValues(alpha: 0.12),
+                                  blurRadius: 28,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            child: QuestionCardWidget(
+                              question: question,
+                              currentQuestionIndex: currentQuestionIndex,
+                              accentColor: _accentStart,
+                              accentGradient: _aptitudeGradient,
+                              child:
+                                  question.type == QuestionType.multipleChoice
+                                  ? MultipleChoiceOptionsWidget(
+                                      question: question,
+                                      onOptionSelected: (index) {
+                                        setState(() {
+                                          answers[currentQuestionIndex] = index;
+                                          _moveNextOrFinish();
+                                        });
+                                      },
+                                    )
+                                  : SingleChildScrollView(
+                                      physics: const BouncingScrollPhysics(),
+                                      child: RatingQuestionWidget(
+                                        selectedRating:
+                                            answers[currentQuestionIndex] ?? 0,
+                                        onRatingSelected: (rating) {
+                                          setState(() {
+                                            answers[currentQuestionIndex] =
+                                                rating;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+
+                    const SizedBox(height: 20),
+
+                    // Navigation Button (for rating questions)
+                    if (question.type == QuestionType.rating)
+                      _buildNavigationButton(),
+                  ],
                 ),
-
-                const SizedBox(height: 20),
-
-                // Navigation Button (for rating questions)
-                if (question.type == QuestionType.rating)
-                  _buildNavigationButton(),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -216,7 +228,7 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
       child: BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -274,7 +286,7 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -293,12 +305,12 @@ class _AptitudeScreenState extends ConsumerState<AptitudeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: LinearProgressIndicator(
                   value: progressValue,
-                  minHeight: 8,
+                  minHeight: 6,
                   backgroundColor: AppColors.surfaceVariant,
                   valueColor: const AlwaysStoppedAnimation<Color>(_accentEnd),
                 ),
