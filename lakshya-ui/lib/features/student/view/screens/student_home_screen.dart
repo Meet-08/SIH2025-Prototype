@@ -5,7 +5,6 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakshya/core/core.dart';
 import 'package:lakshya/core/provider/current_user_notifier.dart';
-import 'package:lakshya/core/theme/app_text_styles.dart';
 import 'package:lakshya/features/student/view/widgets/feature_card.dart';
 
 class StudentHomeScreen extends ConsumerStatefulWidget {
@@ -76,7 +75,132 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
     final horizontalPadding = isDesktop ? 40.0 : (isTablet ? 30.0 : 20.0);
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF1E88E5), // Primary blue
+                Color(0xFF42A5F5), // Primary light blue
+              ],
+            ),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1E88E5).withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+        ),
+        title: Row(
+          children: [
+            // Profile picture on the left
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.3),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: CircleAvatar(
+                radius: 18,
+                backgroundImage: currentUser?.profilePictureUrl != null
+                    ? NetworkImage(currentUser!.profilePictureUrl!)
+                    : const AssetImage(
+                            'assets/images/Default_Profile_Picture.png',
+                          )
+                          as ImageProvider,
+                backgroundColor: Colors.white.withValues(alpha: 0.8),
+              ),
+            ),
+            const SizedBox(width: 16),
+            // App name in the center
+            const Expanded(
+              child: Text(
+                'Lakshya',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            // Logout button on the right
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                onPressed: () {
+                  // Add logout functionality here
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              // Add actual logout logic here
+                              Navigator.of(context).pop();
+                              // Navigate to login screen or perform logout
+                            },
+                            child: const Text('Logout'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(
+                  LucideIcons.log_out,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                tooltip: 'Logout',
+              ),
+            ),
+          ],
+        ),
+        toolbarHeight: 80,
+      ),
+      extendBodyBehindAppBar: false,
       body: AnimatedBuilder(
         animation: _backgroundAnimation,
         builder: (context, child) {
@@ -112,7 +236,7 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Animated Header Section with enhanced styling
+                    // Welcome Section matching the provided image design
                     AnimatedBuilder(
                       animation: _headerController,
                       builder: (context, child) {
@@ -130,215 +254,227 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(
-                                  isDesktop ? 50 : 40,
+                                  isDesktop ? 24 : 20,
                                 ),
                                 child: BackdropFilter(
                                   filter: ui.ImageFilter.blur(
-                                    sigmaX: 20,
-                                    sigmaY: 20,
+                                    sigmaX: 15,
+                                    sigmaY: 15,
                                   ),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: isDesktop ? 24 : 18,
-                                      vertical: isDesktop ? 18 : 14,
+                                    padding: EdgeInsets.all(
+                                      isDesktop ? 32 : 24,
                                     ),
                                     decoration: BoxDecoration(
-                                      gradient:
-                                          AppGradients.brandHeaderGradient,
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.white.withValues(alpha: 0.95),
+                                          Colors.white.withValues(alpha: 0.85),
+                                          AppColors.primaryLight.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                        ],
+                                      ),
                                       border: Border.all(
                                         color: Colors.white.withValues(
-                                          alpha: 0.4,
+                                          alpha: 0.6,
                                         ),
                                         width: 1.5,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withValues(
-                                            alpha: 0.1,
+                                            alpha: 0.08,
                                           ),
                                           blurRadius: 20,
-                                          offset: const Offset(0, 10),
+                                          offset: const Offset(0, 8),
                                         ),
                                         BoxShadow(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.6,
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.1,
                                           ),
-                                          blurRadius: 20,
-                                          offset: const Offset(0, -5),
+                                          blurRadius: 30,
+                                          offset: const Offset(0, 0),
                                         ),
                                       ],
                                     ),
                                     child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
                                       children: [
-                                        // Enhanced multi-ring avatar
-                                        Container(
-                                          width: isDesktop ? 70 : 58,
-                                          height: isDesktop ? 70 : 58,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            gradient: const LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                AppColors.accent,
-                                                AppColors.primary,
-                                              ],
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.2,
-                                                ),
-                                                blurRadius: 15,
-                                                offset: const Offset(0, 5),
-                                              ),
-                                            ],
-                                          ),
-                                          padding: const EdgeInsets.all(3),
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  AppColors.secondary,
-                                                  AppColors.secondaryDark,
-                                                ],
-                                              ),
-                                            ),
-                                            padding: const EdgeInsets.all(3),
-                                            child: CircleAvatar(
-                                              radius: isDesktop ? 30 : 24,
-                                              backgroundImage:
-                                                  currentUser
-                                                          ?.profilePictureUrl !=
-                                                      null
-                                                  ? NetworkImage(
-                                                      currentUser!
-                                                          .profilePictureUrl!,
-                                                    )
-                                                  : const AssetImage(
-                                                          'assets/images/Default_Profile_Picture.png',
-                                                        )
-                                                        as ImageProvider,
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                    255,
-                                                    154,
-                                                    189,
-                                                    195,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: isDesktop ? 18 : 14),
-                                        // Enhanced text section
+                                        // Left side - Text content
                                         Expanded(
+                                          flex: isDesktop ? 5 : 3,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    LucideIcons.sparkles,
-                                                    color:
-                                                        AppColors.accentLight,
-                                                    size: isDesktop ? 20 : 18,
+                                              // Main greeting with improved typography
+                                              RichText(
+                                                text: TextSpan(
+                                                  style: TextStyle(
+                                                    fontSize: isDesktop
+                                                        ? 32
+                                                        : (isTablet ? 28 : 24),
+                                                    fontWeight: FontWeight.w800,
+                                                    height: 1.1,
+                                                    letterSpacing: -0.8,
+                                                    fontFamily:
+                                                        'Inter', // Use system font with better readability
                                                   ),
-                                                  SizedBox(
-                                                    width: isDesktop ? 10 : 8,
-                                                  ),
-                                                  Text(
-                                                    'Welcome back!',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: isDesktop
-                                                          ? 20
-                                                          : 18,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      shadows: [
-                                                        Shadow(
-                                                          color: Colors.black
-                                                              .withValues(
-                                                                alpha: 0.3,
-                                                              ),
-                                                          offset: const Offset(
-                                                            0,
-                                                            1,
-                                                          ),
-                                                          blurRadius: 2,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: isDesktop ? 6 : 4,
-                                              ),
-                                              Text(
-                                                "${currentUser!.name.split(" ")[0]} ${currentUser.name.split(" ").length > 1 ? currentUser.name.split(" ")[1] : ''}",
-                                                style: TextStyle(
-                                                  color: Colors.white
-                                                      .withValues(alpha: 0.95),
-                                                  fontSize: isDesktop ? 18 : 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  shadows: [
-                                                    Shadow(
-                                                      color: Colors.black
-                                                          .withValues(
-                                                            alpha: 0.2,
-                                                          ),
-                                                      offset: const Offset(
-                                                        0,
-                                                        1,
+                                                  children: [
+                                                    const TextSpan(
+                                                      text: 'Hello there,\n',
+                                                      style: TextStyle(
+                                                        color: AppColors
+                                                            .textPrimary,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
-                                                      blurRadius: 1,
+                                                    ),
+                                                    TextSpan(
+                                                      text: (() {
+                                                        final name =
+                                                            currentUser?.name ??
+                                                            '';
+                                                        final parts = name
+                                                            .trim()
+                                                            .split(
+                                                              RegExp(r'\s+'),
+                                                            );
+                                                        if (parts.isEmpty ||
+                                                            parts[0].isEmpty) {
+                                                          return '';
+                                                        }
+                                                        return parts.length > 1
+                                                            ? '${parts[0]} ${parts.last}!'
+                                                            : '${parts[0]}!';
+                                                      }()),
+                                                      style: TextStyle(
+                                                        color:
+                                                            AppColors.primary,
+                                                        fontWeight:
+                                                            FontWeight.w900,
+                                                        letterSpacing: -1.0,
+                                                        shadows: [
+                                                          Shadow(
+                                                            color: AppColors
+                                                                .primary
+                                                                .withValues(
+                                                                  alpha: 0.2,
+                                                                ),
+                                                            offset:
+                                                                const Offset(
+                                                                  0,
+                                                                  2,
+                                                                ),
+                                                            blurRadius: 4,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: isDesktop ? 20 : 16,
+                                              ),
+                                              // Improved subtitle with better spacing and typography
+                                              Container(
+                                                padding: const EdgeInsets.only(
+                                                  left: 2,
+                                                ),
+                                                child: Text(
+                                                  'Ready for\nyour next step?',
+                                                  style: TextStyle(
+                                                    color:
+                                                        AppColors.textSecondary,
+                                                    fontSize: isDesktop
+                                                        ? 20
+                                                        : (isTablet ? 18 : 16),
+                                                    fontWeight: FontWeight.w500,
+                                                    height: 1.4,
+                                                    letterSpacing: 0.3,
+                                                    fontFamily: 'Inter',
+                                                  ),
+                                                ),
+                                              ),
+                                              // Add a subtle accent line
+                                              SizedBox(
+                                                height: isDesktop ? 16 : 12,
+                                              ),
+                                              Container(
+                                                width: 60,
+                                                height: 3,
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      AppColors.primary,
+                                                      AppColors.primary
+                                                          .withValues(
+                                                            alpha: 0.6,
+                                                          ),
+                                                    ],
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        // Enhanced action button
-                                        Container(
-                                          width: isDesktop ? 52 : 46,
-                                          height: isDesktop ? 52 : 46,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white.withValues(
-                                              alpha: 0.15,
+                                        SizedBox(width: isDesktop ? 20 : 12),
+                                        // Right side - Student illustration
+                                        Expanded(
+                                          flex: isDesktop ? 3 : 2,
+                                          child: Container(
+                                            constraints: BoxConstraints(
+                                              maxWidth: isDesktop ? 200 : 150,
+                                              maxHeight: isDesktop ? 200 : 150,
                                             ),
-                                            border: Border.all(
-                                              color: Colors.white.withValues(
-                                                alpha: 0.8,
-                                              ),
-                                              width: 1.8,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.1,
+                                            child: AspectRatio(
+                                              aspectRatio: 1.2,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: AppColors.primary
+                                                          .withValues(
+                                                            alpha: 0.08,
+                                                          ),
+                                                      blurRadius: 20,
+                                                      offset: const Offset(
+                                                        0,
+                                                        8,
+                                                      ),
+                                                    ),
+                                                    BoxShadow(
+                                                      color: AppColors.secondary
+                                                          .withValues(
+                                                            alpha: 0.06,
+                                                          ),
+                                                      blurRadius: 12,
+                                                      offset: const Offset(
+                                                        0,
+                                                        4,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                blurRadius: 10,
-                                                offset: const Offset(0, 3),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                  child: Image.asset(
+                                                    'assets/images/welcome_section.png',
+                                                    fit: BoxFit.contain,
+                                                    alignment: Alignment.center,
+                                                  ),
+                                                ),
                                               ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: Icon(
-                                              LucideIcons.arrow_right,
-                                              color: Colors.white,
-                                              size: isDesktop ? 26 : 22,
                                             ),
                                           ),
                                         ),
@@ -457,40 +593,36 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
                                           Expanded(
                                             child: Text(
                                               'Your journey to success starts here!',
-                                              style: AppTextStyles.body
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: isDesktop
-                                                        ? 18
-                                                        : (isTablet ? 16 : 14),
-                                                    fontWeight: FontWeight.w700,
-                                                    letterSpacing: 0.15,
-                                                    height: 1.2,
-                                                    shadows: [
-                                                      Shadow(
-                                                        color: Colors.black
-                                                            .withValues(
-                                                              alpha: 0.55,
-                                                            ),
-                                                        offset: const Offset(
-                                                          0,
-                                                          1.25,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: isDesktop
+                                                    ? 18
+                                                    : (isTablet ? 16 : 14),
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 0.15,
+                                                height: 1.2,
+                                                shadows: [
+                                                  Shadow(
+                                                    color: Colors.black
+                                                        .withValues(
+                                                          alpha: 0.55,
                                                         ),
-                                                        blurRadius: 2.5,
-                                                      ),
-                                                      Shadow(
-                                                        color: Colors.black
-                                                            .withValues(
-                                                              alpha: 0.25,
-                                                            ),
-                                                        offset: const Offset(
-                                                          0,
-                                                          0,
-                                                        ),
-                                                        blurRadius: 1,
-                                                      ),
-                                                    ],
+                                                    offset: const Offset(
+                                                      0,
+                                                      1.25,
+                                                    ),
+                                                    blurRadius: 2.5,
                                                   ),
+                                                  Shadow(
+                                                    color: Colors.black
+                                                        .withValues(
+                                                          alpha: 0.25,
+                                                        ),
+                                                    offset: const Offset(0, 0),
+                                                    blurRadius: 1,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
