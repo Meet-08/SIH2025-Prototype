@@ -33,3 +33,8 @@ def login_student(student: StudentLogin, db: Session = Depends(get_db)):
     if not verify_password(student.password, str(hashed_password)):
         raise HTTPException(status_code=400, detail="Invalid email or password")
     return StudentOut.model_validate(db_student)
+
+
+@router.get("/me/{email}", response_model=StudentOut)
+def get_student(email: str, db: Session = Depends(get_db)):
+    return crud_student.get_student_by_email(db, email=email)

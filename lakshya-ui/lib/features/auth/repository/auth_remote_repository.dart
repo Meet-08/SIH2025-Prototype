@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakshya/core/failure/app_failure.dart';
 import 'package:lakshya/core/network/dio_client.dart';
+import 'package:lakshya/core/utils/token_storage.dart';
 import 'package:lakshya/features/auth/model/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -40,7 +41,9 @@ class AuthRemoteRepository {
       );
 
       if (response.statusCode == 201) {
-        return Right(UserModel.fromJson(response.data));
+        final user = UserModel.fromJson(response.data);
+        await TokenStorage.saveToken(user.email);
+        return Right(user);
       }
 
       return Left(AppFailure("Unexpected error: ${response.statusCode}"));
@@ -68,7 +71,40 @@ class AuthRemoteRepository {
       );
 
       if (response.statusCode == 200) {
-        return Right(UserModel.fromJson(response.data));
+        final user = UserModel.fromJson(response.data);
+        await TokenStorage.saveToken(user.email);
+        return Right(user);
+      }
+
+      return Left(AppFailure("Unexpected error: ${response.statusCode}"));
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data is Map<String, dynamic>) {
+        final data = e.response!.data as Map<String, dynamic>;
+        final detail = data["detail"] ?? "Unknown server error";
+        return Left(AppFailure(detail));
+      } else {
+        return Left(AppFailure("Network error: ${e.message}"));
+      }
+    } catch (e) {
+      return Left(AppFailure("Unexpected error: $e"));
+    }
+  }
+
+  Future<Either<AppFailure, UserModel>> fetchCurrentUser() async {
+    try {
+      final token = await TokenStorage.getToken();
+      if (token == null) {
+        return Left(AppFailure("No token found"));
+      }
+
+      final response = await dioClient.dio.get(
+        "/student/me/$token",
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+
+      if (response.statusCode == 200) {
+        final user = UserModel.fromJson(response.data);
+        return Right(user);
       }
 
       return Left(AppFailure("Unexpected error: ${response.statusCode}"));

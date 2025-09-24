@@ -22,9 +22,13 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
   late Animation<double> _headerSlideAnimation;
   late Animation<double> _headerFadeAnimation;
 
+  late final ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
+
+    _scrollController = ScrollController();
 
     // Background gradient animation
     _backgroundController = AnimationController(
@@ -59,6 +63,7 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
   void dispose() {
     _backgroundController.dispose();
     _headerController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -74,480 +79,394 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
     final childAspectRatio = isDesktop ? 0.8 : (isTablet ? 0.7 : 0.55);
     final horizontalPadding = isDesktop ? 40.0 : (isTablet ? 30.0 : 20.0);
 
-    return Scaffold(
-      body: AnimatedBuilder(
-        animation: _backgroundAnimation,
-        builder: (context, child) {
-          return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.lerp(
-                    const Color(0xFFE0F7FA),
-                    const Color(0xFFF0F4FF),
-                    _backgroundAnimation.value,
-                  )!,
-                  Color.lerp(
-                    const Color(0xFFB2EBF2),
-                    const Color(0xFFE1E7FF),
-                    _backgroundAnimation.value,
-                  )!,
-                  Color.lerp(
-                    const Color(0xFF80DEEA),
-                    const Color(0xFFB8C5FF),
-                    _backgroundAnimation.value,
-                  )!,
-                ],
-                stops: const [0.0, 0.5, 1.0],
-              ),
-            ),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Custom Header
-                  Container(
-                    margin: EdgeInsets.only(bottom: isDesktop ? 20 : 12),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFF1E88E5), // Primary blue
-                          Color(0xFF42A5F5), // Primary light blue
-                        ],
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF1E88E5).withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
+    // Build the optimized scrollable with Slivers for better performance
+    final scrollable = RepaintBoundary(
+      child: CustomScrollView(
+        controller: _scrollController,
+        physics: const ClampingScrollPhysics(),
+        cacheExtent: 250.0,
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Custom Header
+                Container(
+                  margin: EdgeInsets.only(bottom: isDesktop ? 20 : 12),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF1E88E5), // Primary blue
+                        Color(0xFF42A5F5), // Primary light blue
                       ],
                     ),
-                    child: SafeArea(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: horizontalPadding,
-                          vertical: isDesktop ? 20 : 12,
-                        ),
-                        child: Row(
-                          children: [
-                            // Profile picture on the left
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.3),
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF1E88E5).withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
+                        vertical: isDesktop ? 20 : 12,
+                      ),
+                      child: Row(
+                        children: [
+                          // Profile picture on the left
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.3),
+                                width: 2,
                               ),
-                              child: CircleAvatar(
-                                radius: 18,
-                                backgroundImage:
-                                    currentUser?.profilePictureUrl != null
-                                    ? NetworkImage(
-                                        currentUser!.profilePictureUrl!,
-                                      )
-                                    : const AssetImage(
-                                            'assets/images/Default_Profile_Picture.png',
-                                          )
-                                          as ImageProvider,
-                                backgroundColor: Colors.white.withValues(
-                                  alpha: 0.8,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
                                 ),
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundImage:
+                                  currentUser?.profilePictureUrl != null
+                                  ? NetworkImage(
+                                      currentUser!.profilePictureUrl!,
+                                    )
+                                  : const AssetImage(
+                                          'assets/images/Default_Profile_Picture.png',
+                                        )
+                                        as ImageProvider,
+                              backgroundColor: Colors.white.withValues(
+                                alpha: 0.8,
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            // App name in the center
-                            const Expanded(
-                              child: Text(
-                                'Lakshya',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
-                                ),
+                          ),
+                          const SizedBox(width: 16),
+                          // App name in the center
+                          const Expanded(
+                            child: Text(
+                              'Lakshya',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            // Logout button on the right
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  // Add logout functionality here
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text('Logout'),
-                                        content: const Text(
-                                          'Are you sure you want to logout?',
+                          ),
+                          const SizedBox(width: 16),
+                          // Logout button on the right
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                // Add logout functionality here
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Logout'),
+                                      content: const Text(
+                                        'Are you sure you want to logout?',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Text('Cancel'),
                                         ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                            child: const Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              ref
-                                                  .read(
-                                                    currentUserProvider
-                                                        .notifier,
-                                                  )
-                                                  .logout();
-                                              context.pushNamedAndRemoveUntil(
-                                                '/login',
-                                                (_) => false,
-                                              );
-                                            },
-                                            child: const Text('Logout'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: const Icon(
-                                  LucideIcons.log_out,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                tooltip: 'Logout',
+                                        TextButton(
+                                          onPressed: () {
+                                            ref
+                                                .read(
+                                                  currentUserProvider.notifier,
+                                                )
+                                                .logout();
+                                            context.pushNamedAndRemoveUntil(
+                                              '/student-login',
+                                              (_) => false,
+                                            );
+                                          },
+                                          child: const Text('Logout'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              icon: const Icon(
+                                LucideIcons.log_out,
+                                color: Colors.white,
+                                size: 20,
                               ),
+                              tooltip: 'Logout',
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                ),
 
-                  // Content with padding
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: horizontalPadding,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Welcome Section matching the provided image design
-                        AnimatedBuilder(
-                          animation: _headerController,
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(0, _headerSlideAnimation.value),
-                              child: Opacity(
-                                opacity: _headerFadeAnimation.value,
-                                child: Container(
-                                  width: double.infinity,
-                                  margin: EdgeInsets.fromLTRB(
-                                    0,
-                                    isDesktop ? 30 : 20,
-                                    0,
-                                    isDesktop ? 40 : 30,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      isDesktop ? 24 : 20,
-                                    ),
-                                    child: BackdropFilter(
-                                      filter: ui.ImageFilter.blur(
-                                        sigmaX: 15,
-                                        sigmaY: 15,
+                // Content with padding
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Welcome Section matching the provided image design
+                      AnimatedBuilder(
+                        animation: _headerController,
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: Offset(0, _headerSlideAnimation.value),
+                            child: Opacity(
+                              opacity: _headerFadeAnimation.value,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.fromLTRB(
+                            0,
+                            isDesktop ? 30 : 20,
+                            0,
+                            isDesktop ? 40 : 30,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              isDesktop ? 24 : 20,
+                            ),
+                            child: BackdropFilter(
+                              filter: ui.ImageFilter.blur(
+                                sigmaX: 15,
+                                sigmaY: 15,
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.all(isDesktop ? 32 : 24),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white.withValues(alpha: 0.95),
+                                      Colors.white.withValues(alpha: 0.85),
+                                      AppColors.primaryLight.withValues(
+                                        alpha: 0.1,
                                       ),
-                                      child: Container(
-                                        padding: EdgeInsets.all(
-                                          isDesktop ? 32 : 24,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Colors.white.withValues(
-                                                alpha: 0.95,
+                                    ],
+                                  ),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.6),
+                                    width: 1.5,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.08,
+                                      ),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                    BoxShadow(
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      blurRadius: 30,
+                                      offset: const Offset(0, 0),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    // Left side - Text content
+                                    Expanded(
+                                      flex: isDesktop ? 5 : 3,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          // Main greeting with improved typography
+                                          RichText(
+                                            text: TextSpan(
+                                              style: TextStyle(
+                                                fontSize: isDesktop
+                                                    ? 32
+                                                    : (isTablet ? 28 : 24),
+                                                fontWeight: FontWeight.w800,
+                                                height: 1.1,
+                                                letterSpacing: -0.8,
+                                                fontFamily: 'Inter',
                                               ),
-                                              Colors.white.withValues(
-                                                alpha: 0.85,
-                                              ),
-                                              AppColors.primaryLight.withValues(
-                                                alpha: 0.1,
-                                              ),
-                                            ],
+                                              children: [
+                                                const TextSpan(
+                                                  text: 'Hello there,\n',
+                                                  style: TextStyle(
+                                                    color:
+                                                        AppColors.textPrimary,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: (() {
+                                                    final name =
+                                                        currentUser?.name ?? '';
+                                                    final parts = name
+                                                        .trim()
+                                                        .split(RegExp(r'\s+'));
+                                                    if (parts.isEmpty ||
+                                                        parts[0].isEmpty) {
+                                                      return '';
+                                                    }
+                                                    return parts.length > 1
+                                                        ? '${parts[0]} ${parts.last}!'
+                                                        : '${parts[0]}!';
+                                                  }()),
+                                                  style: TextStyle(
+                                                    color: AppColors.primary,
+                                                    fontWeight: FontWeight.w900,
+                                                    letterSpacing: -1.0,
+                                                    shadows: [
+                                                      Shadow(
+                                                        color: AppColors.primary
+                                                            .withValues(
+                                                              alpha: 0.2,
+                                                            ),
+                                                        offset: const Offset(
+                                                          0,
+                                                          2,
+                                                        ),
+                                                        blurRadius: 4,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          border: Border.all(
-                                            color: Colors.white.withValues(
-                                              alpha: 0.6,
+                                          SizedBox(height: isDesktop ? 20 : 16),
+                                          // Improved subtitle with better spacing and typography
+                                          Container(
+                                            padding: const EdgeInsets.only(
+                                              left: 2,
                                             ),
-                                            width: 1.5,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(
-                                                alpha: 0.08,
+                                            child: Text(
+                                              'Ready for\nyour next step?',
+                                              style: TextStyle(
+                                                color: AppColors.textSecondary,
+                                                fontSize: isDesktop
+                                                    ? 20
+                                                    : (isTablet ? 18 : 16),
+                                                fontWeight: FontWeight.w500,
+                                                height: 1.4,
+                                                letterSpacing: 0.3,
+                                                fontFamily: 'Inter',
                                               ),
-                                              blurRadius: 20,
-                                              offset: const Offset(0, 8),
                                             ),
-                                            BoxShadow(
-                                              color: AppColors.primary
-                                                  .withValues(alpha: 0.1),
-                                              blurRadius: 30,
-                                              offset: const Offset(0, 0),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            // Left side - Text content
-                                            Expanded(
-                                              flex: isDesktop ? 5 : 3,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  // Main greeting with improved typography
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      style: TextStyle(
-                                                        fontSize: isDesktop
-                                                            ? 32
-                                                            : (isTablet
-                                                                  ? 28
-                                                                  : 24),
-                                                        fontWeight:
-                                                            FontWeight.w800,
-                                                        height: 1.1,
-                                                        letterSpacing: -0.8,
-                                                        fontFamily:
-                                                            'Inter', // Use system font with better readability
-                                                      ),
-                                                      children: [
-                                                        const TextSpan(
-                                                          text:
-                                                              'Hello there,\n',
-                                                          style: TextStyle(
-                                                            color: AppColors
-                                                                .textPrimary,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: (() {
-                                                            final name =
-                                                                currentUser
-                                                                    ?.name ??
-                                                                '';
-                                                            final parts = name
-                                                                .trim()
-                                                                .split(
-                                                                  RegExp(
-                                                                    r'\s+',
-                                                                  ),
-                                                                );
-                                                            if (parts.isEmpty ||
-                                                                parts[0]
-                                                                    .isEmpty) {
-                                                              return '';
-                                                            }
-                                                            return parts.length >
-                                                                    1
-                                                                ? '${parts[0]} ${parts.last}!'
-                                                                : '${parts[0]}!';
-                                                          }()),
-                                                          style: TextStyle(
-                                                            color: AppColors
-                                                                .primary,
-                                                            fontWeight:
-                                                                FontWeight.w900,
-                                                            letterSpacing: -1.0,
-                                                            shadows: [
-                                                              Shadow(
-                                                                color: AppColors
-                                                                    .primary
-                                                                    .withValues(
-                                                                      alpha:
-                                                                          0.2,
-                                                                    ),
-                                                                offset:
-                                                                    const Offset(
-                                                                      0,
-                                                                      2,
-                                                                    ),
-                                                                blurRadius: 4,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: isDesktop ? 20 : 16,
-                                                  ),
-                                                  // Improved subtitle with better spacing and typography
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          left: 2,
-                                                        ),
-                                                    child: Text(
-                                                      'Ready for\nyour next step?',
-                                                      style: TextStyle(
-                                                        color: AppColors
-                                                            .textSecondary,
-                                                        fontSize: isDesktop
-                                                            ? 20
-                                                            : (isTablet
-                                                                  ? 18
-                                                                  : 16),
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        height: 1.4,
-                                                        letterSpacing: 0.3,
-                                                        fontFamily: 'Inter',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  // Add a subtle accent line
-                                                  SizedBox(
-                                                    height: isDesktop ? 16 : 12,
-                                                  ),
-                                                  Container(
-                                                    width: 60,
-                                                    height: 3,
-                                                    decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                        colors: [
-                                                          AppColors.primary,
-                                                          AppColors.primary
-                                                              .withValues(
-                                                                alpha: 0.6,
-                                                              ),
-                                                        ],
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            2,
-                                                          ),
-                                                    ),
+                                          ),
+                                          SizedBox(height: isDesktop ? 16 : 12),
+                                          Container(
+                                            width: 60,
+                                            height: 3,
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  AppColors.primary,
+                                                  AppColors.primary.withValues(
+                                                    alpha: 0.6,
                                                   ),
                                                 ],
                                               ),
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
                                             ),
-                                            SizedBox(
-                                              width: isDesktop ? 20 : 12,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: isDesktop ? 20 : 12),
+                                    // Right side - Student illustration
+                                    Expanded(
+                                      flex: isDesktop ? 3 : 2,
+                                      child: Container(
+                                        constraints: BoxConstraints(
+                                          maxWidth: isDesktop ? 200 : 150,
+                                          maxHeight: isDesktop ? 200 : 150,
+                                        ),
+                                        child: AspectRatio(
+                                          aspectRatio: 1.2,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: AppColors.primary
+                                                      .withValues(alpha: 0.08),
+                                                  blurRadius: 20,
+                                                  offset: const Offset(0, 8),
+                                                ),
+                                                BoxShadow(
+                                                  color: AppColors.secondary
+                                                      .withValues(alpha: 0.06),
+                                                  blurRadius: 12,
+                                                  offset: const Offset(0, 4),
+                                                ),
+                                              ],
                                             ),
-                                            // Right side - Student illustration
-                                            Expanded(
-                                              flex: isDesktop ? 3 : 2,
-                                              child: Container(
-                                                constraints: BoxConstraints(
-                                                  maxWidth: isDesktop
-                                                      ? 200
-                                                      : 150,
-                                                  maxHeight: isDesktop
-                                                      ? 200
-                                                      : 150,
-                                                ),
-                                                child: AspectRatio(
-                                                  aspectRatio: 1.2,
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            16,
-                                                          ),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: AppColors
-                                                              .primary
-                                                              .withValues(
-                                                                alpha: 0.08,
-                                                              ),
-                                                          blurRadius: 20,
-                                                          offset: const Offset(
-                                                            0,
-                                                            8,
-                                                          ),
-                                                        ),
-                                                        BoxShadow(
-                                                          color: AppColors
-                                                              .secondary
-                                                              .withValues(
-                                                                alpha: 0.06,
-                                                              ),
-                                                          blurRadius: 12,
-                                                          offset: const Offset(
-                                                            0,
-                                                            4,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            16,
-                                                          ),
-                                                      child: Image.asset(
-                                                        'assets/images/welcome_section.png',
-                                                        fit: BoxFit.contain,
-                                                        alignment:
-                                                            Alignment.center,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              child: Image.asset(
+                                                'assets/images/welcome_section.png',
+                                                fit: BoxFit.contain,
+                                                alignment: Alignment.center,
                                               ),
                                             ),
-                                          ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
+                      ),
 
-                        // Image Box Section
-                        Container(
+                      // Image Box Section (wrapped in RepaintBoundary)
+                      RepaintBoundary(
+                        child: Container(
                           margin: EdgeInsets.fromLTRB(
                             0,
                             0,
@@ -626,7 +545,6 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
                                           child: Image.asset(
                                             'assets/images/hero.png',
                                             fit: BoxFit.cover,
-                                            // Slight upward bias to keep subject centered nicely
                                             alignment: const Alignment(
                                               0,
                                               -0.05,
@@ -717,9 +635,11 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
                             ),
                           ),
                         ),
+                      ),
 
-                        // Enhanced Features Section
-                        Padding(
+                      // Enhanced Features Section (wrapped in RepaintBoundary)
+                      RepaintBoundary(
+                        child: Padding(
                           padding: EdgeInsets.zero,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -814,134 +734,150 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
                                       vertical: isDesktop ? 12 : 8,
                                     ),
                                     children: [
-                                      FeatureCard(
-                                        title: "Aptitude\nQuiz",
-                                        description:
-                                            "Find career paths matched to your strengths",
-                                        icon: LucideIcons.brain,
-                                        imagePath: 'assets/images/Aptitude.png',
-                                        accentGradient: const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xFF00CEC9),
-                                            Color(0xFF4ADEAA),
-                                          ],
-                                        ),
-                                        accentColor: const Color(0xFF00CEC9),
-                                        onTap: () =>
-                                            context.pushNamed("/aptitude-quiz"),
-                                      ),
-                                      FeatureCard(
-                                        title: "Career Roadmap",
-                                        description:
-                                            "Step-by-step guidance to your dream career",
-                                        icon: LucideIcons.map,
-                                        imagePath:
-                                            "assets/images/Career_Roadmap.png",
-                                        accentGradient: const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xFFFF9500),
-                                            Color(0xFFFF6B35),
-                                          ],
-                                        ),
-                                        accentColor: const Color.fromARGB(
-                                          255,
-                                          255,
-                                          157,
-                                          21,
-                                        ),
-                                        onTap: () => context.pushNamed(
-                                          "/course-to-career-mapping",
+                                      RepaintBoundary(
+                                        child: FeatureCard(
+                                          title: "Aptitude\nQuiz",
+                                          description:
+                                              "Find career paths matched to your strengths",
+                                          icon: LucideIcons.brain,
+                                          imagePath:
+                                              'assets/images/Aptitude.png',
+                                          accentGradient: const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xFF00CEC9),
+                                              Color(0xFF4ADEAA),
+                                            ],
+                                          ),
+                                          accentColor: const Color(0xFF00CEC9),
+                                          onTap: () => context.pushNamed(
+                                            "/aptitude-quiz",
+                                          ),
                                         ),
                                       ),
-                                      FeatureCard(
-                                        title: "Nearby Colleges",
-                                        description:
-                                            "Discover colleges tailored to your goals",
-                                        icon: LucideIcons.graduation_cap,
-                                        imagePath: 'assets/images/College.png',
-                                        accentGradient: const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xFFE91E63),
-                                            Color(0xFFFF6B9D),
-                                          ],
+                                      RepaintBoundary(
+                                        child: FeatureCard(
+                                          title: "Career Roadmap",
+                                          description:
+                                              "Step-by-step guidance to your dream career",
+                                          icon: LucideIcons.map,
+                                          imagePath:
+                                              "assets/images/Career_Roadmap.png",
+                                          accentGradient: const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xFFFF9500),
+                                              Color(0xFFFF6B35),
+                                            ],
+                                          ),
+                                          accentColor: const Color.fromARGB(
+                                            255,
+                                            255,
+                                            157,
+                                            21,
+                                          ),
+                                          onTap: () => context.pushNamed(
+                                            "/course-to-career-mapping",
+                                          ),
                                         ),
-                                        accentColor: const Color(0xFFE91E63),
-                                        onTap: () =>
-                                            context.pushNamed("/colleges"),
                                       ),
-                                      FeatureCard(
-                                        title: "Scholarships",
-                                        description:
-                                            "Find scholarships and financial aid opportunities",
-                                        icon: LucideIcons.award,
-                                        imagePath:
-                                            'assets/images/Scholarship.png',
-                                        accentGradient: const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xFF9C27B0),
-                                            Color(0xFFBA68C8),
-                                          ],
+                                      RepaintBoundary(
+                                        child: FeatureCard(
+                                          title: "Nearby Colleges",
+                                          description:
+                                              "Discover colleges tailored to your goals",
+                                          icon: LucideIcons.graduation_cap,
+                                          imagePath:
+                                              'assets/images/College.png',
+                                          accentGradient: const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xFFE91E63),
+                                              Color(0xFFFF6B9D),
+                                            ],
+                                          ),
+                                          accentColor: const Color(0xFFE91E63),
+                                          onTap: () =>
+                                              context.pushNamed("/colleges"),
                                         ),
-                                        accentColor: const Color(0xFF9C27B0),
-                                        onTap: () =>
-                                            context.pushNamed("/scholarship"),
                                       ),
-                                      FeatureCard(
-                                        title: "Timeline",
-                                        description:
-                                            "Track your academic and career milestones",
-                                        icon: LucideIcons.calendar,
-                                        imagePath: 'assets/images/Timeline.png',
-                                        accentGradient: const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xFF3F51B5),
-                                            Color(0xFF5C6BC0),
-                                          ],
+                                      RepaintBoundary(
+                                        child: FeatureCard(
+                                          title: "Scholarships",
+                                          description:
+                                              "Find scholarships and financial aid opportunities",
+                                          icon: LucideIcons.award,
+                                          imagePath:
+                                              'assets/images/Scholarship.png',
+                                          accentGradient: const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xFF9C27B0),
+                                              Color(0xFFBA68C8),
+                                            ],
+                                          ),
+                                          accentColor: const Color(0xFF9C27B0),
+                                          onTap: () =>
+                                              context.pushNamed("/scholarship"),
                                         ),
-                                        accentColor: const Color(0xFF3F51B5),
-                                        onTap: () =>
-                                            context.pushNamed("/timeline"),
                                       ),
-                                      FeatureCard(
-                                        title: "Resources",
-                                        description:
-                                            "Access study materials and career resources",
-                                        icon: LucideIcons.book_open,
-                                        imagePath:
-                                            'assets/images/Resources.png',
-                                        accentGradient: const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xFF00BCD4),
-                                            Color(0xFF26C6DA),
-                                          ],
+                                      RepaintBoundary(
+                                        child: FeatureCard(
+                                          title: "Timeline",
+                                          description:
+                                              "Track your academic and career milestones",
+                                          icon: LucideIcons.calendar,
+                                          imagePath:
+                                              'assets/images/Timeline.png',
+                                          accentGradient: const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xFF3F51B5),
+                                              Color(0xFF5C6BC0),
+                                            ],
+                                          ),
+                                          accentColor: const Color(0xFF3F51B5),
+                                          onTap: () =>
+                                              context.pushNamed("/timeline"),
                                         ),
-                                        accentColor: const Color(0xFF00BCD4),
-                                        onTap: () {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Resources feature is coming soon',
+                                      ),
+                                      RepaintBoundary(
+                                        child: FeatureCard(
+                                          title: "Resources",
+                                          description:
+                                              "Access study materials and career resources",
+                                          icon: LucideIcons.book_open,
+                                          imagePath:
+                                              'assets/images/Resources.png',
+                                          accentGradient: const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xFF00BCD4),
+                                              Color(0xFF26C6DA),
+                                            ],
+                                          ),
+                                          accentColor: const Color(0xFF00BCD4),
+                                          onTap: () {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Resources feature is coming soon',
+                                                ),
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                duration: Duration(seconds: 2),
                                               ),
-                                              behavior:
-                                                  SnackBarBehavior.floating,
-                                              duration: Duration(seconds: 2),
-                                            ),
-                                          );
-                                        },
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ],
                                   );
@@ -952,15 +888,52 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
                             ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
 
-                  // Attractive Footer
-                  _buildFooter(context, isDesktop, isTablet),
+                // Attractive Footer
+                _buildFooter(context, isDesktop, isTablet),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // Animated background: only the background container will be rebuilt on animation ticks.
+    return Scaffold(
+      body: AnimatedBuilder(
+        animation: _backgroundAnimation,
+        child: scrollable,
+        builder: (context, child) {
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.lerp(
+                    const Color(0xFFE0F7FA),
+                    const Color(0xFFF0F4FF),
+                    _backgroundAnimation.value,
+                  )!,
+                  Color.lerp(
+                    const Color(0xFFB2EBF2),
+                    const Color(0xFFE1E7FF),
+                    _backgroundAnimation.value,
+                  )!,
+                  Color.lerp(
+                    const Color(0xFF80DEEA),
+                    const Color(0xFFB8C5FF),
+                    _backgroundAnimation.value,
+                  )!,
                 ],
+                stops: const [0.0, 0.5, 1.0],
               ),
             ),
+            child: child,
           );
         },
       ),

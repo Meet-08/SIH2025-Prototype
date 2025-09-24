@@ -54,6 +54,16 @@ class AuthViewModel extends _$AuthViewModel {
     );
   }
 
+  Future<void> fetchCurrentUser() async {
+    state = const AsyncValue.loading();
+    final result = await _authRemoteRepository.fetchCurrentUser();
+
+    state = result.fold(
+      (failure) => AsyncValue.error(failure.message, StackTrace.current),
+      (user) => _signinSuccess(user),
+    );
+  }
+
   AsyncValue<UserModel>? _signinSuccess(UserModel user) {
     _currentUserNotifier.addUser(user);
     return state = AsyncValue.data(user);
