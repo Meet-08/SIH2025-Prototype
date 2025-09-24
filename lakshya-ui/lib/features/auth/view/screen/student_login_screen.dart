@@ -83,6 +83,8 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                       return Transform.scale(
                         scale: value,
                         child: Container(
+                          width: 120,
+                          height: 120,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
@@ -100,10 +102,13 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                               ),
                             ],
                           ),
-                          child: const Icon(
-                            LucideIcons.graduation_cap,
-                            size: 48,
-                            color: Colors.white,
+                          child: ClipOval(
+                            child: Image.asset(
+                              "assets/images/logo.jpg",
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       );

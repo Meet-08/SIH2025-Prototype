@@ -145,7 +145,9 @@ class _StudentRegisterScreenState extends ConsumerState<StudentRegisterScreen> {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
+          width: 100,
+          height: 100,
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: const LinearGradient(
@@ -162,10 +164,13 @@ class _StudentRegisterScreenState extends ConsumerState<StudentRegisterScreen> {
               ),
             ],
           ),
-          child: const Icon(
-            LucideIcons.user_plus,
-            size: 40,
-            color: Colors.white,
+          child: ClipOval(
+            child: Image.asset(
+              "assets/images/logo.jpg",
+              width: 64,
+              height: 64,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
 

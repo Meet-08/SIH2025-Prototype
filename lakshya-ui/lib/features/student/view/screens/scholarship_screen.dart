@@ -92,9 +92,9 @@ class _ScholarshipScreenState extends ConsumerState<ScholarshipScreen>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color(0xFF3B82F6), // Primary blue
-                Color(0xFF6D28D9), // Purple accent
-                Color(0xFF10B981), // Success green
+                Color(0xFF7B1FA2), // Darker purple
+                Color(0xFF9C27B0), // Main purple
+                Color(0xFFBA68C8), // Light purple
               ],
             ),
             borderRadius: const BorderRadius.only(
@@ -103,9 +103,14 @@ class _ScholarshipScreenState extends ConsumerState<ScholarshipScreen>
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
+                color: const Color(0xFF9C27B0).withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
+              ),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
               ),
             ],
           ),

@@ -249,8 +249,8 @@ class AppGradients {
   );
 
   static const LinearGradient timelineGradient = LinearGradient(
-    colors: [AppColors.accent, AppColors.accentDark],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
+    colors: [Color(0xFF3F51B5), Color(0xFF5C6BC0)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
   );
 }
