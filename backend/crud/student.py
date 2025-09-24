@@ -7,11 +7,14 @@ from utils.hashing import hash_password
 
 
 def get_student_by_email(db: Session, email: str):
-    return (
+    db_student = (
         db.query(model_student.Student)
         .filter(model_student.Student.email == email)
         .first()
     )
+    if not db_student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return StudentOut.model_validate(db_student)
 
 
 def create_student(db: Session, student: StudentCreate):
