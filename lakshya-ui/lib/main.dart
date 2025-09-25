@@ -13,23 +13,39 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
   final container = ProviderContainer();
-  final notifier = container.read(authViewModelProvider.notifier);
-  await notifier.fetchCurrentUser();
   runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch current user when the app starts
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authViewModelProvider.notifier).fetchCurrentUser();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserProvider);
+    final authState = ref.watch(authViewModelProvider);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Lakshya - Career Guidance App',
       routes: routes,
       theme: AppTheme.lightTheme,
-      home: currentUser != null
+      home: authState?.isLoading == true
+          ? const Scaffold(body: Center(child: Loader()))
+          : currentUser != null
           ? const StudentHomeScreen()
           : const StudentLoginScreen(),
     );

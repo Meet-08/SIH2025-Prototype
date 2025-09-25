@@ -123,36 +123,41 @@ class _StudentHomeScreenState extends ConsumerState<StudentHomeScreen>
                       child: Row(
                         children: [
                           // Profile picture on the left
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.3),
-                                width: 2,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
+                          GestureDetector(
+                            onTap: () {
+                              context.pushNamed('/student-dashboard');
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.3),
+                                  width: 2,
                                 ),
-                              ],
-                            ),
-                            child: CircleAvatar(
-                              radius: 18,
-                              backgroundImage:
-                                  currentUser?.profilePictureUrl != null
-                                  ? NetworkImage(
-                                      currentUser!.profilePictureUrl!,
-                                    )
-                                  : const AssetImage(
-                                          'assets/images/Default_Profile_Picture.png',
-                                        )
-                                        as ImageProvider,
-                              backgroundColor: Colors.white.withValues(
-                                alpha: 0.8,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 18,
+                                backgroundImage:
+                                    currentUser?.profilePictureUrl != null
+                                    ? NetworkImage(
+                                        currentUser!.profilePictureUrl!,
+                                      )
+                                    : const AssetImage(
+                                            'assets/images/Default_Profile_Picture.png',
+                                          )
+                                          as ImageProvider,
+                                backgroundColor: Colors.white.withValues(
+                                  alpha: 0.8,
+                                ),
                               ),
                             ),
                           ),

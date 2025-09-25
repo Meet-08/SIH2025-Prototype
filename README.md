@@ -1,11 +1,11 @@
-# 🎯 Lakshya - AI-Powered Career Guidance Platform
+# 🎯 Lakshya - Career Guidance Platform
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.9.0-blue.svg)](https://flutter.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green.svg)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.13-yellow.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
 
-**Lakshya** is a comprehensive AI-powered career guidance platform designed to help students make informed decisions about their educational and career paths. Developed for Smart India Hackathon 2025, this application provides personalized recommendations, interactive career roadmaps, and comprehensive course-career mapping to guide students towards their ideal career trajectory.
+**Lakshya** is a comprehensive career guidance platform designed to help students make informed decisions about their educational and career paths. Developed for Smart India Hackathon 2025, this application provides personalized recommendations, interactive career roadmaps, and comprehensive course-career mapping to guide students towards their ideal career trajectory.
 
 ## 🌟 Key Features
 
@@ -44,28 +44,36 @@
 
 <div align="center">
 
+### Authentication & Onboarding
+
 <table>
   <tr>
     <td align="center">
-      <img src="prototye-images/Screenshot_1757959475.png" width="250" alt="Login Screen"/>
+      <img src="prototype-images/Login.png" width="250" alt="Login Screen"/>
       <br><b>Login Screen</b>
     </td>
     <td align="center">
-      <img src="prototye-images/Screenshot_1757959479.png" width="250" alt="Register Screen"/>
+      <img src="prototype-images/Register.png" width="250" alt="Register Screen"/>
       <br><b>Register Screen</b>
     </td>
   </tr>
 </table>
 
+### Home & Dashboard
+
 <table>
   <tr>
     <td align="center">
-      <img src="prototye-images/Screenshot_1757959526.png" width="250" alt="Home Screen"/>
-      <br><b>Home Screen</b>
+      <img src="prototype-images/Home Screen 1.png" width="250" alt="Home Screen 1"/>
+      <br><b>Home Screen - Welcome</b>
     </td>
     <td align="center">
-      <img src="prototye-images/Screenshot_1757959532.png" width="250" alt="Features"/>
-      <br><b>Features</b>
+      <img src="prototype-images/Home Screen 2.png" width="250" alt="Home Screen 2"/>
+      <br><b>Home Screen - Features</b>
+    </td>
+    <td align="center">
+      <img src="prototype-images/Home Screen 3.png" width="250" alt="Home Screen 3"/>
+      <br><b>Home Screen - Navigation</b>
     </td>
   </tr>
 </table>
@@ -73,40 +81,70 @@
 <table>
   <tr>
     <td align="center">
-      <img src="prototye-images/Screenshot_1757959581.png" width="250" alt="Assessment Results"/>
-      <br><b>Assessment Results</b>
-    </td>
-    <td align="center">
-      <img src="prototye-images/Screenshot_1757959585.png" width="250" alt="Assessment Results"/>
-      <br><b>Assessment Results</b>
-    </td>
-
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <td align="center">
-      <img src="prototye-images/Screenshot_1757959591.png" width="250" alt="career roadmap"/>
-      <br><b>Course Details</b>
-    </td>
-    <td align="center">
-      <img src="prototye-images/Screenshot_1757959597.png" width="250" alt="College List"/>
-      <br><b>College List</b>
+      <img src="prototype-images/Dashboard.png" width="250" alt="Dashboard"/>
+      <br><b>Main Dashboard</b>
     </td>
   </tr>
 </table>
 
+### Career Assessment
+
 <table>
   <tr>
-      <td align="center">
-      <img src="prototye-images/Screenshot_1757959602.png" width="250" alt="scholarship list"/>
-      <br><b>scholarship list</b>
+    <td align="center">
+      <img src="prototype-images/Aptitude Screen 1.png" width="250" alt="Aptitude Screen 1"/>
+      <br><b>Aptitude Assessment - Part 1</b>
     </td>
     <td align="center">
-      <img src="prototye-images/Screenshot_1757959612.png" width="250" alt="Timeline Tracker"/>
-      <br><b>Timeline Tracker</b>
+      <img src="prototype-images/Aptitude Screen 2.png" width="250" alt="Aptitude Screen 2"/>
+      <br><b>Aptitude Assessment - Part 2</b>
     </td>
+  </tr>
+</table>
+
+### Results & Recommendations
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="prototype-images/Result Screen 1.png" width="250" alt="Result Screen 1"/>
+      <br><b>Assessment Results - Overview</b>
+    </td>
+    <td align="center">
+      <img src="prototype-images/Result Screen 2.png" width="250" alt="Result Screen 2"/>
+      <br><b>Assessment Results - Details</b>
+    </td>
+  </tr>
+</table>
+
+### Career & Educational Information
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="prototype-images/Career Screen.png" width="250" alt="Career Screen"/>
+      <br><b>Career Exploration</b>
+    </td>
+    <td align="center">
+      <img src="prototype-images/College Screen.png" width="250" alt="College Screen"/>
+      <br><b>College Information</b>
+    </td>
+  </tr>
+</table>
+
+### Financial Aid & Timeline
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="prototype-images/Scholarship Screen.png" width="250" alt="Scholarship Screen"/>
+      <br><b>Scholarship Opportunities</b>
+    </td>
+    <td align="center">
+      <img src="prototype-images/Timeline Screen.png" width="250" alt="Timeline Screen"/>
+      <br><b>Academic Timeline</b>
+    </td>
+  </tr>
 </table>
 
 </div>
