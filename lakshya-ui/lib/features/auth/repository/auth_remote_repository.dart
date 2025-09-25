@@ -90,13 +90,10 @@ class AuthRemoteRepository {
     }
   }
 
-  Future<Either<AppFailure, UserModel>> fetchCurrentUser() async {
+  Future<Either<AppFailure, UserModel>> fetchCurrentUser({
+    required String token,
+  }) async {
     try {
-      final token = await TokenStorage.getToken();
-      if (token == null) {
-        return Left(AppFailure("No token found"));
-      }
-
       final response = await dioClient.dio.get(
         "/student/me/$token",
         options: Options(headers: {"Authorization": "Bearer $token"}),

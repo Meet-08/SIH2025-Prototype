@@ -1,4 +1,5 @@
 import 'package:lakshya/core/provider/current_user_notifier.dart';
+import 'package:lakshya/core/utils/token_storage.dart';
 import 'package:lakshya/features/auth/model/user_model.dart';
 import 'package:lakshya/features/auth/repository/auth_remote_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -55,9 +56,13 @@ class AuthViewModel extends _$AuthViewModel {
   }
 
   Future<void> fetchCurrentUser() async {
+    final token = await TokenStorage.getToken();
+
+    if (token == null) return;
+
     state = const AsyncValue.loading();
-    final result = await _authRemoteRepository.fetchCurrentUser();
-    if (!ref.mounted) return;
+    final result = await _authRemoteRepository.fetchCurrentUser(token: token);
+
     state = result.fold(
       (failure) => AsyncValue.error(failure.message, StackTrace.current),
       (user) => _signinSuccess(user),

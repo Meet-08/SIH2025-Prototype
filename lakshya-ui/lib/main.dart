@@ -13,29 +13,25 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
   final container = ProviderContainer();
-  await container.read(authViewModelProvider.notifier).fetchCurrentUser();
-
+  final notifier = container.read(authViewModelProvider.notifier);
+  await notifier.fetchCurrentUser();
   runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = ref.watch(currentUserProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Lakshya - Career Guidance App',
       routes: routes,
       theme: AppTheme.lightTheme,
-      home: Consumer(
-        builder: (context, ref, child) {
-          final user = ref.watch(currentUserProvider);
-          return user != null
-              ? const StudentHomeScreen()
-              : const StudentLoginScreen();
-        },
-      ),
+      home: currentUser != null
+          ? const StudentHomeScreen()
+          : const StudentLoginScreen(),
     );
   }
 }

@@ -6,7 +6,7 @@ from db.deps import get_db
 from schema.student import StudentCreate, StudentLogin, StudentOut
 from utils.hashing import verify_password
 
-router = APIRouter(prefix="/v1/api/student")
+router = APIRouter()
 
 
 @router.post("/register", response_model=StudentOut, status_code=201)
